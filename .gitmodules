@@ -1,0 +1,3 @@
+[submodule "pycg_bonds"]
+	path = pycg_bonds
+	url = https://github.com/mjtadema/pycg_bonds.git

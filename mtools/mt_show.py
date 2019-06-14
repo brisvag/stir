@@ -1,8 +1,8 @@
 from pymol import cmd
 
 # local imports
-from pycg_bonds.pycg_bonds import cg_bonds
-from mtools.mt_sele import mt_sele
+import pycg_bonds.pycg_bonds
+import mtools.mt_sele
 
 
 #script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -10,8 +10,8 @@ from mtools.mt_sele import mt_sele
 
 def mt_show(topfile=None, selection='all'):
     print('stuff is happening!')
-    cg_bonds(topfile, selection)
-    mt_sele()
+    cmd.cg_bonds(topfile, selection)
+    cmd.mt_sele()
 
 
 cmd.extend('mt_show', mt_show)

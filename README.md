@@ -3,13 +3,17 @@
 This repository is a collection of tools that will make your life easier
 when using pymol to visualize Martini coarse-grained trajectories.
 
-# Usage
+# Installation
 
 To download the repo, use:
 
 `git clone --recurse-submodules`
 
-# List of tools
+# Tools
 
-- **pycg_bonds**: draws bonds and elastic network for coarse-grained systems
-- 
+## pycg_bonds
+
+Draws bonds and elastic network for coarse-grained systems. From within pymol:
+
+`cg_bonds selection, [tpr_file|top_file]`
+

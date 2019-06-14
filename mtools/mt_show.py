@@ -2,8 +2,7 @@ from pymol import cmd
 
 # local imports
 from pycg_bonds.pycg_bonds import cg_bonds
-from
-from mtools import mt_sele
+from mtools.mt_sele import mt_sele
 
 
 #script_dir = os.path.dirname(os.path.realpath(__file__))

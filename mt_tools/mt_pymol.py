@@ -64,9 +64,20 @@ cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 
 cmd.load(args.S)
 cmd.sync()
-cmd.load_traj(args.T)
+
+if args.T:
+    cmd.load_traj(args.T)
 cmd.sync()
-cmd.do(f'cg_bonds {args.P}')
+
+cg_bond_args = []
+if args.P:
+    cg_bond_args.append(args.P)
+if args.G:
+    cg_bond_args.append(f'gmx={args.G}')
+cg_bond_args = ', '.join(cg_bond_args)
+
+cmd.do(f'cg_bonds {cg_bond_args}')
 cmd.sync()
+
 cmd.do('mt_sele')
 cmd.sync()

@@ -40,10 +40,12 @@ parser.add_argument(dest='P', type=valid_top, default=None, nargs='?',
                     help='top or tpr file with the topology of the system')
 parser.add_argument(dest='T', type=valid_traj, default=None, nargs='?',
                     help='corresponding trajectory file')
-parser.add_argument('-s', '--skip', type=int, dest='skip', default=1,
+parser.add_argument('-s', '--skip', dest='skip', type=int, default=1,
                     help='when loading a trajectory, load frames with this rate')   # TODO
-parser.add_argument('-g', '--gmx', type=str, dest='G', default=None,
+parser.add_argument('-g', '--gmx', dest='G', type=str, default=None,
                     help='path to the gromacs executable')  # TODO
+parser.add_argument('--keepwater', dest='keepwater', action='store_true',
+                    help='do not delete waters from the system. Decreases performance')
 # TODO: add more options (load_traj start/end...)
 # TODO: passing arguments to pymol
 
@@ -68,6 +70,9 @@ cmd.sync()
 if args.T:
     cmd.load_traj(args.T)
 cmd.sync()
+
+if not args.keepwater:
+    cmd.remove('resname W or resname WN')
 
 cg_bond_args = []
 if args.P:

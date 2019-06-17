@@ -44,9 +44,13 @@ parser.add_argument('-s', '--skip', type=int, dest='skip', default=1,
                     help='when loading a trajectory, load frames with this rate')   # TODO
 parser.add_argument('-g', '--gmx', type=str, dest='G', default=None,
                     help='path to the gromacs executable')  # TODO
+# TODO: add more options (load_traj start/end...)
 # TODO: passing arguments to pymol
 
 args = parser.parse_args()
+
+# TODO: check size of trajectory and compare with ram size. If not a good ratio (?), warn the user
+#       and ask for confirmation. Also, let them know they can use -s to skip frames
 
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()

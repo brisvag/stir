@@ -7,7 +7,7 @@ Python wrapper for pymol to easily visualize martini trajectories
 import os
 import argparse
 import pymol
-from pymol import cmd, stored
+from pymol import cmd
 import __main__
 
 
@@ -53,7 +53,7 @@ mt_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 
 cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
-cmd.run('mt_tools/mt_tools/mt_sele.py')
+cmd.run(os.path.join(mt_dir, 'mt_sele.py'))
 
 cmd.load(args.S)
 cmd.sync()
@@ -63,4 +63,3 @@ cmd.do(f'cg_bonds {args.P}')
 cmd.sync()
 cmd.do('mt_sele')
 cmd.sync()
-

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Python wrapper for pymol to easily visualize martini trajectories

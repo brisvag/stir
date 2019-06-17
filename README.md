@@ -14,12 +14,12 @@ git clone --recurse-submodules
 
 To open pymol and automatically run all the default tools, run:
 ```
-./mt_tools/mt_pymol.sh
+./mt_tools/mt_pymol.py
 ```
 
 To make it easier to launch it from anywhere, add an alias in your `~/.bashrc`:
 ```
-alias mt_pymol="/path/to/mt_pymol.sh"
+alias mt_pymol="/path/to/mt_pymol.py"
 ```
 
 Alternatively, you can run the individual tools from pymol (or add them to you `~/.pymolrc.pml`)

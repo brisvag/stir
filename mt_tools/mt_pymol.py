@@ -49,11 +49,12 @@ args = parser.parse_args()
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
 
-mt_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+this_script_dir = os.path.dirname(os.path.realpath(__file__))
 
+mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
 
 cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
-cmd.run(os.path.join(mt_dir, 'mt_sele.py'))
+cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 
 cmd.load(args.S)
 cmd.sync()

@@ -15,6 +15,10 @@ selectors = {
 def mt_sele():
     """
     easily select relevant groups of atoms
+
+    Usage: mt_sele
+
+    See also: mt_desele
     """
     for sel, logic in selectors.items():
         cmd.select(sel, logic)
@@ -23,6 +27,13 @@ def mt_sele():
 
 
 def mt_desele():
+    """
+    deletes all selections created by mt_sele
+
+    Usage: mt_desele
+
+    See also: mt_sele
+    """
     for sel in selectors:
         cmd.delete(sel)
 

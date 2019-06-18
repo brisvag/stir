@@ -103,6 +103,7 @@ Martini Tools:
 help cg_bonds
 help mt_sele
 help mt_supercell
+help mt_movie
 '''
 
 print(mt_help)

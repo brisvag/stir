@@ -1,3 +1,7 @@
+"""
+configuration file for movie (or image) rendering
+"""
+
 from pymol import cmd
 from pymol import util
 

@@ -1,3 +1,7 @@
+"""
+initial configuration file for pymol
+"""
+
 from pymol import cmd
 import multiprocessing
 

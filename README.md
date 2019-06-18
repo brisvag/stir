@@ -59,3 +59,8 @@ mt_supercell 1,1,5
 WARNING: Pymol creates aactual copies of the system, so this is an expensive command!
 
 Source: [https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py]
+
+## mt_movie
+Makes a nice ray-traced movie of the trajectory.
+
+**TODO**

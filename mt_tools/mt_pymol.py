@@ -64,6 +64,7 @@ cmd.run(os.path.join(mt_dir, 'config_files', 'pymolrc.py'))
 cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
+cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
 
 cmd.load(args.S)
 if not args.keepwater:
@@ -97,7 +98,6 @@ if not args.keepwater:
     cmd.delete('solv')
 
 mt_help = '''
-
 Martini Tools:
     
 help cg_bonds

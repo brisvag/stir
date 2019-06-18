@@ -28,26 +28,34 @@ and then use their functions from within pymol as normal.
 # Tools
 
 ## mt_pymol
-
 Wrapper for most of the other tools.
 ```
 mt_pymol system.gro topol.top md.xtc
 ```
 
 ## pycg_bonds
-
-Draws bonds and elastic network for coarse-grained systems. From within pymol:
+Draws bonds and elastic network for coarse-grained systems.
 ```
 cg_bonds selection [, tpr_file|top_file]
 ```
 Source: [https://github.com/mjtadema/pycg_bonds]
 
 ## mt_sele
-
 Automatically creates useful named selections, such as `lip` for lipids and `BB` for backbone beads.
-
-From within pymol:
 ```
 mt_sele
 mt_desele
 ```
+
+## mt_supercell
+Shows periodic images. To show a 3x3 grid in the x,y plane:
+```
+mt_supercell 3,3,1
+```
+To show first 2 neighbouring cells in the z direction:
+```
+mt_supercell 1,1,5
+```
+WARNING: Pymol creates aactual copies of the system, so this is an expensive command!
+
+Source: [https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py]

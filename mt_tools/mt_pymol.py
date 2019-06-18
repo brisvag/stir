@@ -66,16 +66,20 @@ cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
 
 cmd.load(args.S)
+if not args.keepwater:
+    cmd.remove('resname W or resname WN')
+cmd.sync()
+
 cmd.sync()
 
 if args.T:
+    traj_args = [args.T]
+    if not args.keepwater:
+        traj_args.append('selection="not resname W and not resname WN"')
     cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
     cmd.sync()
-    cmd.load_traj(args.T)
+    cmd.load_traj(*traj_args)
 cmd.sync()
-
-if not args.keepwater:
-    cmd.remove('resname W or resname WN')
 
 cg_bond_args = []
 if args.P:
@@ -89,6 +93,8 @@ cmd.sync()
 
 cmd.do('mt_sele')
 cmd.sync()
+if not args.keepwater:
+    cmd.delete('solv')
 
 mt_help = '''
 

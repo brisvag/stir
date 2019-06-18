@@ -63,6 +63,7 @@ mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
 
 cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
+cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
 
 cmd.load(args.S)
 cmd.sync()
@@ -86,3 +87,14 @@ cmd.sync()
 
 cmd.do('mt_sele')
 cmd.sync()
+
+mt_help = '''
+
+Martini Tools:
+    
+help cg_bonds
+help mt_sele
+help mt_supercell
+'''
+
+print(mt_help)

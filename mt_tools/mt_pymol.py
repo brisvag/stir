@@ -38,8 +38,9 @@ parser.add_argument(dest='struct', type=valid_str,
                     help='gro or similar file containing a martini structure')
 parser.add_argument(dest='topol', type=valid_top, default=None, nargs='?',
                     help='top or tpr file with the topology of the system')
-parser.add_argument(dest='traj', type=valid_traj, default=None, nargs='?',
-                    help='corresponding trajectory file')
+parser.add_argument(dest='traj', type=valid_traj, default=None, nargs='*',
+                    help='corresponding trajectory file. If multiple files are given, '
+                         'they are concatenated')
 parser.add_argument('-s', '--skip', dest='skip', type=int, default=1,
                     help='when loading a trajectory, load frames with this rate')   # TODO
 parser.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
@@ -65,22 +66,23 @@ cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
-
-cmd.load(args.struct)
-if not args.keepwater:
-    cmd.remove('resname W or resname WN')
 cmd.sync()
 
+cmd.load(args.struct)
 cmd.sync()
 
 if args.traj:
-    traj_args = [args.traj]
-    if not args.keepwater:
-        traj_args.append('selection="not resname W and not resname WN"')
     cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
+    for traj in args.traj:
+        cmd.sync()
+        cmd.load_traj(traj)
     cmd.sync()
-    cmd.load_traj(*traj_args)
-cmd.sync()
+
+# TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?
+#       Other option: call trjconv to get rid of the waters before loading
+if not args.keepwater:
+    cmd.remove('resname W or resname WN')
+    cmd.sync()
 
 cg_bond_args = []
 if args.topol:
@@ -99,11 +101,12 @@ if not args.keepwater:
 
 mt_help = '''
 Martini Tools:
-    
+
 help cg_bonds
 help mt_sele
 help mt_supercell
 help mt_movie
 '''
 
+cmd.sync()
 print(mt_help)

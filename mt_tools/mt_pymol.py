@@ -70,12 +70,13 @@ cmd.sync()
 
 cmd.load(args.struct)
 cmd.sync()
+sys_obj = cmd.get_object_list()[0]
 
 if args.traj:
     cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
     for traj in args.traj:
         cmd.sync()
-        cmd.load_traj(traj)
+        cmd.load_traj(traj, sys_obj)
     cmd.sync()
 
 # TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?

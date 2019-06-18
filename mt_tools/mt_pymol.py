@@ -34,15 +34,15 @@ def valid_top(param):
 
 parser = argparse.ArgumentParser(prog='mt_pymol')
 
-parser.add_argument(dest='S', type=valid_str,
+parser.add_argument(dest='struct', type=valid_str,
                     help='gro or similar file containing a martini structure')
-parser.add_argument(dest='P', type=valid_top, default=None, nargs='?',
+parser.add_argument(dest='topol', type=valid_top, default=None, nargs='?',
                     help='top or tpr file with the topology of the system')
-parser.add_argument(dest='T', type=valid_traj, default=None, nargs='?',
+parser.add_argument(dest='traj', type=valid_traj, default=None, nargs='?',
                     help='corresponding trajectory file')
 parser.add_argument('-s', '--skip', dest='skip', type=int, default=1,
                     help='when loading a trajectory, load frames with this rate')   # TODO
-parser.add_argument('-g', '--gmx', dest='G', type=str, default=None,
+parser.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
                     help='path to the gromacs executable')  # TODO
 parser.add_argument('--keepwater', dest='keepwater', action='store_true',
                     help='do not delete waters from the system. Decreases performance')
@@ -66,15 +66,15 @@ cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
 
-cmd.load(args.S)
+cmd.load(args.struct)
 if not args.keepwater:
     cmd.remove('resname W or resname WN')
 cmd.sync()
 
 cmd.sync()
 
-if args.T:
-    traj_args = [args.T]
+if args.traj:
+    traj_args = [args.traj]
     if not args.keepwater:
         traj_args.append('selection="not resname W and not resname WN"')
     cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
@@ -83,10 +83,10 @@ if args.T:
 cmd.sync()
 
 cg_bond_args = []
-if args.P:
-    cg_bond_args.append(args.P)
-if args.G:
-    cg_bond_args.append(f'gmx={args.G}')
+if args.topol:
+    cg_bond_args.append(args.topol)
+if args.gmx:
+    cg_bond_args.append(f'gmx={args.gmx}')
 cg_bond_args = ', '.join(cg_bond_args)
 
 cmd.do(f'cg_bonds {cg_bond_args}')

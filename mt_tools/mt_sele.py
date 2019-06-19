@@ -1,3 +1,0 @@
-from pymol import cmd
-
-

@@ -83,14 +83,6 @@ def nice_colors():
         stored.mt_colors.append(idx)
 
 
-def color_resid(selection='all'):
-    stored.res_dict = {}
-    cmd.iterate(selection, 'stored.res_dict[resi] = random.choice(stored.mt_colors)')
-    cmd.alter(selection, 'color = stored.res_dict[resi]')
-    cmd.sync()
-    cmd.recolor()
-
-
 def mt_color(method, selection='all'):
     stored.tmp_dict = {}
     cmd.iterate(selection, f'stored.tmp_dict[{method}] = random.choice(stored.mt_colors)')

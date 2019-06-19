@@ -3,11 +3,10 @@ initial configuration file for pymol
 """
 
 from pymol import cmd
-import multiprocessing
-
+import psutil
 
 # multithreading
-cmd.set('max_threads', multiprocessing.cpu_count())
+cmd.set('max_threads', psutil.cpu_count())
 
 # color space
 cmd.space('pymol')

@@ -9,6 +9,7 @@ import argparse
 import pymol
 from pymol import cmd
 import __main__
+import psutil
 
 
 def valid_str(param):
@@ -42,9 +43,9 @@ parser.add_argument(dest='traj', type=valid_traj, default=None, nargs='*',
                     help='corresponding trajectory file. If multiple files are given, '
                          'they are concatenated')
 parser.add_argument('-s', '--skip', dest='skip', type=int, default=1,
-                    help='when loading a trajectory, load frames with this rate')   # TODO
+                    help='when loading a trajectory, load frames with this rate')
 parser.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
-                    help='path to the gromacs executable')  # TODO
+                    help='path to the gromacs executable')
 parser.add_argument('--keepwater', dest='keepwater', action='store_true',
                     help='do not delete waters from the system. Decreases performance')
 # TODO: add more options (load_traj start/end...)
@@ -52,8 +53,28 @@ parser.add_argument('--keepwater', dest='keepwater', action='store_true',
 
 args = parser.parse_args()
 
-# TODO: check size of trajectory and compare with ram size. If not a good ratio (?), warn the user
-#       and ask for confirmation. Also, let them know they can use -s to skip frames
+if args.T:
+    freemem = psutil.virtual_memory().available
+    traj_size = 0
+    traj_size += (os.path.getsize(x) for x in args.T)
+    water_ratio = 1
+    if not args.keepwater:
+        # TODO: VERY arbitrary number. When pycg_bonds parsing is a module, use that!
+        water_ratio = 1/3
+    # check if there's enough free memory: 5 is based on some testing
+    if freemem < 5*(traj_size/args.skip):
+        ok = False
+        inp = input('WARNING: You may not have enough free memory to open this big trajectory.\n'
+                    'Consider using the trajectory options (-s, ...).\n'
+                    'Otherwise, continue at your own risk ;) [y/N] ')
+        while not ok:
+            if inp.lower() in ['yes', 'y']:
+                ok = True
+            elif inp.lower() in ['no', 'n']:
+                parser.print_help()
+                exit(0)
+            else:
+                print(f'"{inp}" is not a valid choice.')
 
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
@@ -76,7 +97,7 @@ if args.traj:
     cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
     for traj in args.traj:
         cmd.sync()
-        cmd.load_traj(traj, sys_obj)
+        cmd.load_traj(traj, sys_obj, interval=args.skip)
     cmd.sync()
 
 # TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?

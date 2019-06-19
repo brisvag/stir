@@ -61,7 +61,7 @@ if args.traj:
     water_ratio = 1
     if not args.keepwater:
         # TODO: VERY arbitrary number. When pycg_bonds parsing is a module, use that!
-        water_ratio = 1/3
+        water_ratio = 1/2
     # check if there's enough free memory: 5 is based on some testing
     if freemem < 5*(traj_size/args.skip):
         ok = False
@@ -85,7 +85,7 @@ mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
 
 cmd.run(os.path.join(mt_dir, 'config_files', 'pymolrc.py'))
 cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
-cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_sele.py'))
+cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_nice.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
 cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
 cmd.sync()
@@ -117,18 +117,16 @@ cg_bond_args = ', '.join(cg_bond_args)
 cmd.do(f'cg_bonds {cg_bond_args}')
 cmd.sync()
 
-cmd.do('mt_sele')
+cmd.do(f'mt_nice not *_elastics')
 cmd.sync()
-if not args.keepwater:
-    cmd.delete('solv')
 
 mt_help = '''
-Martini Tools:
+Martini Tools functions:
 
-help cg_bonds
-help mt_sele
-help mt_supercell
-help mt_movie
+- cg_bonds
+- mt_nice, mt_sele, mt_color
+- mt_supercell
+- mt_movie
 '''
 
 cmd.sync()

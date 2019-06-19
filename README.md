@@ -42,11 +42,26 @@ cg_bonds selection [, tpr_file|top_file]
 ```
 Source: https://github.com/mjtadema/pycg_bonds
 
-## mt_sele
-Automatically creates useful named selections, such as `lip` for lipids and `BB` for backbone beads.
+## mt_nice
+Provides a series of function for easy selection and visualization.
+
+### mt_nice
+Wraps other subtools to select, colors and shows molecules nicely.
+```
+mt_nice selection
+```
+
+### mt_sele
+To automatically create (or delete) commonly used selections, such as `lip` for lipids and `BB` for backbone beads:
 ```
 mt_sele
 mt_desele
+```
+
+### mt_color 
+Color all atoms in the selection based on a common identification (chain id, residue id...).
+```
+mt_color resi|chain|name|... [, selection]
 ```
 
 ## mt_supercell

@@ -53,10 +53,11 @@ parser.add_argument('--keepwater', dest='keepwater', action='store_true',
 
 args = parser.parse_args()
 
-if args.T:
+if args.traj:
     freemem = psutil.virtual_memory().available
     traj_size = 0
-    traj_size += (os.path.getsize(x) for x in args.T)
+    for traj in args.traj:
+        traj_size += os.path.getsize(traj)
     water_ratio = 1
     if not args.keepwater:
         # TODO: VERY arbitrary number. When pycg_bonds parsing is a module, use that!

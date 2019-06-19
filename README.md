@@ -40,7 +40,7 @@ Draws bonds and elastic network for coarse-grained systems.
 ```
 cg_bonds selection [, tpr_file|top_file]
 ```
-Source: [https://github.com/mjtadema/pycg_bonds]
+Source: https://github.com/mjtadema/pycg_bonds
 
 ## mt_sele
 Automatically creates useful named selections, such as `lip` for lipids and `BB` for backbone beads.
@@ -60,7 +60,7 @@ mt_supercell 1,1,5
 ```
 WARNING: Pymol creates aactual copies of the system, so this is an expensive command!
 
-Source: [https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py]
+Source: https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py
 
 ## mt_movie
 Makes a nice ray-traced movie of the trajectory.

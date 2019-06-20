@@ -1,12 +1,41 @@
 """
-configuration file for movie (or image) rendering
+configuration functions for pymol containing a collection of settings for a specific purpose
 """
 
 from pymol import cmd
-from pymol import util
+import psutil
 
 
-def config():
+def pymolrc():
+    """
+    startup settings, always applicable
+    """
+    # multithreading
+    cmd.set('max_threads', psutil.cpu_count())
+
+    # color space
+    cmd.space('pymol')
+
+    # nicer visualization
+    cmd.set('valence', 'on')
+    cmd.set('cartoon_side_chain_helper', 'on')
+    cmd.set('cartoon_highlight_color', 'grey50')
+    cmd.set('sphere_mode', '9')
+
+
+def trajectory():
+    """
+    optimization settings for trajectory visualization
+    """
+    # improves performance drastically when loading a lot of states
+    cmd.set('defer_builds_mode', 3)
+
+
+def rendering():
+    """
+    optimal settings for movie (or picture) rendering
+    """
+
     # ray trace movie options
     cmd.set('ray_trace_frames', 'on')
     cmd.set('movie_loop', 'off')

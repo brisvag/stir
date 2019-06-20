@@ -93,6 +93,7 @@ def mt_color(method, selection='all'):
 
 
 def mt_nice(selection='all'):
+    # TODO: add multiple choice option, e.g: pretty|bilayer|vdw?
     mt_sele()
 
     cmd.set('stick_radius', 0.7)
@@ -138,7 +139,8 @@ def mt_nice(selection='all'):
             cmd.show_as(data['style'], f'{selection} and {sel}')
 
 
-nice_colors()
-cmd.extend('mt_sele', mt_sele)
-cmd.extend('mt_color', mt_color)
-cmd.extend('mt_nice', mt_nice)
+def load():
+    nice_colors()
+    cmd.extend('mt_sele', mt_sele)
+    cmd.extend('mt_color', mt_color)
+    cmd.extend('mt_nice', mt_nice)

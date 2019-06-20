@@ -170,8 +170,9 @@ SEE ALSO
         cmd.color(i+1, name)
 
 
-cmd.extend('mt_symexpcell', symexpcell)
-cmd.extend('mt_supercell', supercell)
+def load():
+    cmd.extend('mt_symexpcell', symexpcell)
+    cmd.extend('mt_supercell', supercell)
 
-# tab-completion of arguments
-cmd.auto_arg[3]['mt_supercell'] = [cmd.object_sc, 'object', '']
+    # tab-completion of arguments
+    cmd.auto_arg[3]['mt_supercell'] = [cmd.object_sc, 'object', '']

@@ -1,7 +1,7 @@
 from pymol import cmd, stored
-import os
 
-from mt_tools.config_files import rendering
+# local imports
+from mt_tools import config
 
 def mt_movie(duration=5, ):
     """
@@ -13,19 +13,13 @@ def mt_movie(duration=5, ):
 
     """
     duration = int(duration)
-#    this_script_dir = os.path.dirname(os.path.realpath(__file__))
-#    print(this_script_dir)
-#    mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
-    rendering.config()
 
-    mt_dir = '/home/brisvag/git/mt_tools'
+    #    settings_file = '/tmp/mt_settings.py'
+    #
+    #    # store settings for later restoration
+    #    cmd.do(f'save_settings {settings_file}')
 
-    settings_file = '/tmp/mt_settings.py'
-
-    # store settings for later restoration
-#    cmd.do(f'save_settings {settings_file}')
-
-    cmd.run(os.path.join(mt_dir, 'config_files', 'rendering.py'))
+    config.rendering()
 
     cmd.mset(f'1x{duration*30}')
     cmd.mview('store', 1, state=1)

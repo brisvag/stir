@@ -1,3 +1,0 @@
-[submodule "pycg_bonds"]
-	path = mt_tools/pycg_bonds
-	url = https://github.com/mjtadema/pycg_bonds.git

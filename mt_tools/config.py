@@ -2,7 +2,7 @@
 configuration functions for pymol containing a collection of settings for a specific purpose
 """
 
-from pymol import cmd
+from pymol import cmd, util
 import psutil
 
 
@@ -42,7 +42,7 @@ def rendering():
     cmd.set('opaque_background', 'off')
     cmd.set('movie_auto_interpolate', 'off')
 
-    # crank up performance
+    # crank up quality and down performance
     util.performance(0)
     cmd.set('hash_max', 1000)
     cmd.set('line_smooth', 'on')

@@ -1,20 +1,22 @@
-from pymol import cmd, stored
+from pymol import cmd, stored, movie
 
 # local imports
 from mt_tools import config
 from mt_tools.utils import store_settings
 
 
-def mt_movie(movie_type, duration=5):
+def mt_movie(movie_type, savefile=None, duration=5, mode='ray'):
     """
     loads nice settings for rendering and records a movie of the trajectory
     before running, position the camera to have a good point of view
 
     arguments
+    savefile: file name that will be used by the move, without extension
     movie_type: one of traj|matrix
                 - traj: records the whole trajectory
                 - matrix: a whole revolution around the z axis
-    duration: duration in seconds of the final movie
+    duration: duration in seconds of the final movie (default=5)
+    ray: set to 'draw' to disable ray tracing (default='ray')
     """
     duration = int(duration)
 
@@ -62,6 +64,10 @@ def mt_movie(movie_type, duration=5):
     else:
         raise ValueError(f'{movie_type} is not a valid argument. See `help mt_movie`.')
 
+    if savefile:
+        movie.produce(savefile, mode=mode)
+    else:
+        cmd.mplay()
 
     # restore previous settings
 #    cmd.do(f'run {settings_file}')

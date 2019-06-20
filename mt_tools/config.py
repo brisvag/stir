@@ -37,8 +37,8 @@ def rendering():
     """
 
     # ray trace movie options
-    cmd.set('ray_trace_frames', 'on')
-    cmd.set('movie_loop', 'off')
+    cmd.set('ray_trace_frames', 'off')  # can be turned on at conversion
+    cmd.set('movie_loop', 'on')
     cmd.set('opaque_background', 'off')
     cmd.set('movie_auto_interpolate', 'off')
     cmd.set('movie_auto_store', 'off')

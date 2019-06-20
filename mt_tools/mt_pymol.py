@@ -11,6 +11,11 @@ from pymol import cmd
 import __main__
 import psutil
 
+# local imports
+from mt_tools import config
+from mt_tools import mt_movie, mt_nice, mt_supercell
+import pycg_bonds.pycg_bonds as pycg_bonds
+
 
 def valid_str(param):
     _, ext = os.path.splitext(param)
@@ -53,11 +58,15 @@ parser.add_argument('--keepwater', dest='keepwater', action='store_true',
 
 args = parser.parse_args()
 
+
+def clean_path(path_in):
+    return os.path.realpath(os.path.expanduser(os.path.expandvars(path_in)))
+
 if args.traj:
     freemem = psutil.virtual_memory().available
     traj_size = 0
     for traj in args.traj:
-        traj_size += os.path.getsize(traj)
+        traj_size += os.path.getsize(clean_path(traj))
     water_ratio = 1
     if not args.keepwater:
         # TODO: VERY arbitrary number. When pycg_bonds parsing is a module, use that!
@@ -80,25 +89,33 @@ if args.traj:
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
 
-this_script_dir = os.path.dirname(os.path.realpath(__file__))
-mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
+#this_script_dir = os.path.dirname(os.path.realpath(__file__))
+#mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
 
-cmd.run(os.path.join(mt_dir, 'config_files', 'pymolrc.py'))
-cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
-cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_nice.py'))
-cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
-cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
+#cmd.run(os.path.join(mt_dir, 'config_files', 'pymolrc.py'))
+#cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
+#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_nice.py'))
+#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
+#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
+
+config.pymolrc()
+mt_nice.load()
+mt_supercell.load()
+mt_movie.load()
+pycg_bonds.main()
 cmd.sync()
 
-cmd.load(args.struct)
+
+cmd.load(clean_path(args.struct))
 cmd.sync()
 sys_obj = cmd.get_object_list()[0]
 
 if args.traj:
-    cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
+    config.trajectory()
+    #cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
     for traj in args.traj:
         cmd.sync()
-        cmd.load_traj(traj, sys_obj, interval=args.skip)
+        cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip)
     cmd.sync()
 
 # TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?
@@ -109,7 +126,7 @@ if not args.keepwater:
 
 cg_bond_args = []
 if args.topol:
-    cg_bond_args.append(args.topol)
+    cg_bond_args.append(clean_path(args.topol))
 if args.gmx:
     cg_bond_args.append(f'gmx={args.gmx}')
 cg_bond_args = ', '.join(cg_bond_args)

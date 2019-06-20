@@ -18,13 +18,3 @@ def config():
     cmd.set('cartoon_side_chain_helper', 'on')
     cmd.set('cartoon_highlight_color', 'grey50')
     cmd.set('sphere_mode', '9')
-
-
-
-
-
-
-
-
-
-

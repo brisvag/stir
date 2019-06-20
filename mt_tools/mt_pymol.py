@@ -89,22 +89,12 @@ if args.traj:
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
 
-#this_script_dir = os.path.dirname(os.path.realpath(__file__))
-#mt_dir = os.path.realpath(os.path.join(this_script_dir, os.pardir))
-
-#cmd.run(os.path.join(mt_dir, 'config_files', 'pymolrc.py'))
-#cmd.run(os.path.join(mt_dir, 'pycg_bonds', 'pycg_bonds.py'))
-#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_nice.py'))
-#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_supercell.py'))
-#cmd.run(os.path.join(mt_dir, 'mt_tools', 'mt_movie.py'))
-
 config.pymolrc()
 mt_nice.load()
 mt_supercell.load()
 mt_movie.load()
 pycg_bonds.main()
 cmd.sync()
-
 
 cmd.load(clean_path(args.struct))
 cmd.sync()

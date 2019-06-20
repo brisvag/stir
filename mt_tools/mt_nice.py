@@ -85,7 +85,8 @@ def nice_colors():
 
 def mt_color(method, selection='all'):
     stored.tmp_dict = {}
-    cmd.iterate(selection, f'stored.tmp_dict[{method}] = random.choice(stored.mt_colors)')
+    stored.r_choice = random.choice
+    cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.mt_colors)')
     cmd.alter(selection, f'color = stored.tmp_dict[{method}]')
     cmd.sync()
     stored.tmp_dict = {}

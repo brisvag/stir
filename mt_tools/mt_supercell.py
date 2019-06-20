@@ -176,3 +176,7 @@ def load():
 
     # tab-completion of arguments
     cmd.auto_arg[3]['mt_supercell'] = [cmd.object_sc, 'object', '']
+
+
+if __name__ == 'pymol':
+    load()

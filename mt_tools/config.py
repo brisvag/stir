@@ -79,3 +79,9 @@ def rendering():
     cmd.set('sphere_quality', 4)
 
     cmd.set('movie_panel', 'on')
+
+
+if __name__ == 'pymol':
+    cmd.extend('mt_config_pymolrc', pymolrc)
+    cmd.extend('mt_config_trajectory', trajectory)
+    cmd.extend('mt_config_rendering', rendering)

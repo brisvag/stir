@@ -56,3 +56,7 @@ def mt_movie(movie_type, duration=5):
 
 def load():
     cmd.extend('mt_movie', mt_movie)
+
+
+if __name__ == 'pymol':
+    load()

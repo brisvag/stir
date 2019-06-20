@@ -2,6 +2,7 @@ from pymol import cmd, stored
 
 # local imports
 from mt_tools import config
+from mt_tools.utils import store_settings
 
 
 def mt_movie(movie_type, duration=5):
@@ -17,14 +18,16 @@ def mt_movie(movie_type, duration=5):
     """
     duration = int(duration)
 
-    #    settings_file = '/tmp/mt_settings.py'
-    #
-    #    # store settings for later restoration
-    #    cmd.do(f'save_settings {settings_file}')
+#    # store settings for later restoration
+#    store_settings.load()
+#    cmd.sync()
+#    settings_file = '/tmp/mt_settings.py'
+#    cmd.do(f'store_settings {settings_file}')
 
     config.rendering()
     cmd.sync()
 
+    cmd.mview('reset')
     frames = duration*30
     cmd.mset(f'1x{frames}')
 
@@ -38,17 +41,27 @@ def mt_movie(movie_type, duration=5):
         cmd.sync()
     if movie_type == 'matrix':
         cmd.mview('store', 1)
-        cmd.sync()
+        cmd.mview('store', frames)
+        # TODO: moving objects seems a bit hacky. Any better solution?
+        for obj in cmd.get_object_list():
+            cmd.mview('store', object=obj)
+            cmd.sync()
         for i in range(4):
-            frame = ((frames//4)*(i+1))
+            frame = (frames * (i+1)/4)
             cmd.frame(frame)
             cmd.sync()
-            cmd.rotate('z', angle=90, camera=0)
-            cmd.sync()
-            cmd.mview('store', 0)
-            cmd.sync()
+            for obj in cmd.get_object_list():
+                cmd.rotate('z', angle=-90, camera=0, object=obj)
+                cmd.sync()
+                cmd.mview('store', object=obj)
+                cmd.sync()
+                cmd.mview('reinterpolate', object=obj, power=1)
+                cmd.sync()
         cmd.mview('reinterpolate')
         cmd.sync()
+    else:
+        raise ValueError(f'{movie_type} is not a valid argument. See `help mt_movie`.')
+
 
     # restore previous settings
 #    cmd.do(f'run {settings_file}')

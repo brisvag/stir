@@ -41,6 +41,7 @@ def rendering():
     cmd.set('movie_loop', 'off')
     cmd.set('opaque_background', 'off')
     cmd.set('movie_auto_interpolate', 'off')
+    cmd.set('movie_auto_store', 'off')
 
     # crank up quality and down performance
     util.performance(0)

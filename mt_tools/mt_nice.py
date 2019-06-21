@@ -152,6 +152,10 @@ def mt_sele(delete=None):
     else:
         for sel, logic in stored.mt_selectors.items():
             cmd.select(sel, logic)
+    cmd.sync()
+    # disable last selection to avoid accidental modifications to it
+    cmd.deselect()
+    cmd.sync()
 
 
 def mt_color(method, selection='all'):
@@ -162,6 +166,7 @@ def mt_color(method, selection='all'):
     cmd.sync()
     stored.tmp_dict = {}
     cmd.recolor()
+    cmd.sync()
 
 
 def mt_nice(main_sele='all', style='clean'):

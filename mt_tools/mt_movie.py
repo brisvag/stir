@@ -1,8 +1,7 @@
-from pymol import cmd, stored, movie
+from pymol import cmd, movie
 
 # local imports
 from mt_tools import config
-from mt_tools.utils import store_settings
 
 
 def mt_movie(movie_type, savefile=None, duration=5, mode='ray'):
@@ -26,13 +25,16 @@ def mt_movie(movie_type, savefile=None, duration=5, mode='ray'):
 #    settings_file = '/tmp/mt_settings.py'
 #    cmd.do(f'store_settings {settings_file}')
 
+    # load nice settings for rendering
     config.rendering()
     cmd.sync()
 
+    # initialize movie frames
     cmd.mview('reset')
     frames = duration*30
     cmd.mset(f'1x{frames}')
 
+    # make a still movie of the whole trajectory
     if movie_type == 'traj':
         cmd.mview('store', 1, state=1)
         cmd.sync()
@@ -41,6 +43,8 @@ def mt_movie(movie_type, savefile=None, duration=5, mode='ray'):
         cmd.sync()
         cmd.mview('reinterpolate')
         cmd.sync()
+
+    # make a movie rotating 360 around the z axis
     if movie_type == 'matrix':
         cmd.mview('store', 1)
         cmd.mview('store', frames)
@@ -64,6 +68,7 @@ def mt_movie(movie_type, savefile=None, duration=5, mode='ray'):
     else:
         raise ValueError(f'{movie_type} is not a valid argument. See `help mt_movie`.')
 
+    # save if required, otherwise just play it
     if savefile:
         movie.produce(savefile, mode=mode)
     else:

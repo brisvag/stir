@@ -2,39 +2,6 @@ from pymol import cmd, stored
 import random
 
 
-selectors = {
-    'prot': 'polymer.protein',
-    'BB': 'polymer.protein and name BB',
-    'SC': 'polymer.protein and name SC*',
-    'solv': 'resname W or resname WN or resname ION',
-    'ions': 'resname ION',
-    'lip': 'organic',
-    'nucl': 'polymer.nucleic'
-}
-
-
-def mt_sele(delete=None):
-    """
-    easily select relevant groups of atoms
-
-    Usage:
-
-    to create selections: mt_sele
-    to delete them: mt_sele delete
-
-    See also: mt_desele
-    """
-    if delete:
-        if delete == 'delete':
-            for sel in selectors:
-                cmd.delete(sel)
-        else:
-            print('Unknown option. Type `mt_sele delete` to delete all the mt selections')
-    else:
-        for sel, logic in selectors.items():
-            cmd.select(sel, logic)
-
-
 def nice_colors():
     """
     creates a set of nicely distinguishable colors and stores their pymol ids in stored.mt_colors
@@ -83,6 +50,120 @@ def nice_colors():
         stored.mt_colors.append(idx)
 
 
+def nice_settings():
+    nice_colors()
+
+    stored.mt_selectors = {
+        'prot': 'polymer.protein',
+        'BB': 'polymer.protein and name BB',
+        'SC': 'polymer.protein and name SC*',
+        'solv': 'resname W or resname WN or resname ION',
+        'ions': 'resname ION',
+        'lip': 'organic',
+        'nucl': 'polymer.nucleic'
+    }
+
+    def wrap(func, *args, **kwargs):
+        return lambda: func(*args, **kwargs)
+
+    # settings to be used by mt_nice. Values are functions wrapped with wrap,
+    # so they can be called when needed adding ()
+    stored.mt_nice_set = {
+        'prot': {
+            'rainbow': {
+                'color_method': None,
+                'style': None,
+            },
+            'clean': {
+                'color_method': None,
+                'style': None,
+            },
+        },
+        'BB': {
+            'rainbow': {
+                'color_method': wrap(mt_color, 'chain', 'BB'),
+                'style': wrap(cmd.show_as, 'sticks', 'BB'),
+            },
+            'clean': {
+                'color_method': wrap(mt_color, 'chain', 'BB'),
+                'style': wrap(cmd.show_as, 'sticks', 'BB'),
+            },
+        },
+        'SC': {
+            'rainbow': {
+                'color_method': wrap(mt_color, 'resname', 'SC'),
+                'style': wrap(cmd.show_as, 'sticks', 'SC'),
+            },
+            'clean': {
+                'color_method': None,
+                'style': wrap(cmd.hide, 'everything', 'SC'),
+            },
+        },
+        'solv': {
+            'rainbow': {
+                'color_method': None,
+                'style': wrap(cmd.hide, 'everything', 'solv'),
+            },
+            'clean': {
+                'color_method': None,
+                'style': wrap(cmd.hide, 'everything', 'solv'),
+            },
+        },
+        'ions': {
+            'rainbow': {
+                'color_method': wrap(mt_color, 'resname', 'ions'),
+                'style': wrap(cmd.show_as, 'spheres', 'ions'),
+            },
+            'clean': {
+                'color_method': None,
+                'style': wrap(cmd.hide, 'everything', 'ions'),
+            },
+        },
+        'lip': {
+            'rainbow': {
+                'color_method': wrap(mt_color, 'resi', 'lip'),
+                'style': wrap(cmd.show_as, 'sticks', 'lip'),
+            },
+            'clean': {
+                'color_method': wrap(mt_color, 'resname', 'lip'),
+                'style': wrap(cmd.show_as, 'sticks', 'lip'),
+            },
+        },
+        'nucl': {
+            'rainbow': {
+                'color_method': wrap(mt_color, 'resname', 'nucl'),
+                'style': wrap(cmd.show_as, 'sticks', 'nucl'),
+            },
+            'clean': {
+                'color_method': wrap(mt_color, 'resi', 'nucl'),
+                'style': wrap(cmd.show_as, 'sticks', 'nucl'),
+            },
+        },
+    }
+
+
+def mt_sele(delete=None):
+    """
+    easily select relevant groups of atoms
+
+    Usage:
+
+    to create selections: mt_sele
+    to delete them: mt_sele delete
+
+    See also: mt_desele
+    """
+    if delete:
+        if delete == 'delete':
+            for sel in stored.mt_selectors:
+                cmd.delete(sel)
+        else:
+            print('Unknown option. Type `mt_sele delete` to delete all the mt selections')
+    else:
+        for sel, logic in stored.mt_selectors.items():
+            cmd.select(sel, logic)
+
+
 def mt_color(method, selection='all'):
     stored.tmp_dict = {}
     stored.r_choice = random.choice
@@ -93,55 +174,27 @@ def mt_color(method, selection='all'):
     cmd.recolor()
 
 
-def mt_nice(selection='all'):
-    # TODO: add multiple choice option, e.g: pretty|bilayer|vdw?
+def mt_nice(selection='all', style='clean'):
     mt_sele()
 
     cmd.set('stick_radius', 0.7)
 
-    nice_settings = {
-        'prot': {
-            'color_method': None,
-            'style': 'stick'
-        },
-        'BB': {
-            'color_method': 'chain',
-            'style': 'stick'
-        },
-        'SC': {
-            'color_method': 'resi',
-            'style': 'stick'
-        },
-        'solv': {
-            'color_method': None,
-            'style': 'sphere'
-        },
-        'ions': {
-            'color_method': 'name',
-            'style': 'sphere'
-        },
-        'lip': {
-            'color_method': 'resi',
-            'style': 'stick'
-        },
-        'nucl': {
-            'color_method': 'chain',
-            'style': 'stick'
-        },
-    }
-
     # TODO: a nicer way to do this?
     cmd.color('blue', f'{selection} and solv')
 
-    for sel, data in nice_settings.items():
-        if data['color_method']:
-            mt_color(data['color_method'], f'{selection} and {sel}')
-        if data['style']:
-            cmd.show_as(data['style'], f'{selection} and {sel}')
+    for sel, styles in stored.mt_nice_set.items():
+        for _, setting in styles[style].items():
+            print(setting)
+
+
+#            if setting['color_method']:
+#                mt_color(data['color_method'], f'{selection} and {sel}')
+#            if setting['style']:
+#                cmd.show_as(data['style'], f'{selection} and {sel}')
 
 
 def load():
-    nice_colors()
+    nice_settings()
     cmd.extend('mt_sele', mt_sele)
     cmd.extend('mt_color', mt_color)
     cmd.extend('mt_nice', mt_nice)

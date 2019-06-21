@@ -10,32 +10,12 @@ import pymol
 from pymol import cmd
 import __main__
 import psutil
+import pycg_bonds.pycg_bonds as pycg_bonds
 
 # local imports
 from mt_tools import config
 from mt_tools import mt_movie, mt_nice, mt_supercell
-import pycg_bonds.pycg_bonds as pycg_bonds
-
-
-def valid_str(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.gro',) or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid gromacs structure file.')
-    return param
-
-
-def valid_traj(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.xtc',) or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid gromacs trajectory file.')
-    return param
-
-
-def valid_top(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.top', '.itp', '.tpr') or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid tpr or topology file.')
-    return param
+from mt_tools.utils import valid_str, valid_top, valid_traj, clean_path
 
 
 parser = argparse.ArgumentParser(prog='mt_pymol')
@@ -59,9 +39,7 @@ parser.add_argument('--keepwater', dest='keepwater', action='store_true',
 args = parser.parse_args()
 
 
-def clean_path(path_in):
-    return os.path.realpath(os.path.expanduser(os.path.expandvars(path_in)))
-
+# check if there's enough memory to load the requested traj and warn the user if needed
 if args.traj:
     freemem = psutil.virtual_memory().available
     traj_size = 0
@@ -84,25 +62,31 @@ if args.traj:
                 parser.print_help()
                 exit(0)
             else:
-                print(f'"{inp}" is not a valid choice.')
+                print(f'"{inp}" is not a valid choice. [y/N]')
 
+# initialize pymol
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
 
+# run pymolrc and load all the mt_tools
 config.pymolrc()
 mt_nice.load()
 mt_supercell.load()
 mt_movie.load()
+
+# load pycg_bonds
 pycg_bonds.main()
 cmd.sync()
 
+# open the structure
 cmd.load(clean_path(args.struct))
 cmd.sync()
+# get the loaded object's name, so we can load the traj into it as new states
 sys_obj = cmd.get_object_list()[0]
 
+# load trajectories
 if args.traj:
     config.trajectory()
-    #cmd.run(os.path.join(mt_dir, 'config_files', 'trajectory.py'))
     for traj in args.traj:
         cmd.sync()
         cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip)
@@ -110,10 +94,12 @@ if args.traj:
 
 # TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?
 #       Other option: call trjconv to get rid of the waters before loading
+# delete waters, unless they are needed
 if not args.keepwater:
     cmd.remove('resname W or resname WN')
     cmd.sync()
 
+# run pycg_bonds with as many arguments as we got
 cg_bond_args = []
 if args.topol:
     cg_bond_args.append(clean_path(args.topol))
@@ -124,9 +110,11 @@ cg_bond_args = ', '.join(cg_bond_args)
 cmd.do(f'cg_bonds {cg_bond_args}')
 cmd.sync()
 
+# run mt_nice with the `clean` setting
 cmd.do(f'mt_nice not *_elastics')
 cmd.sync()
 
+# print some help after everything is loaded
 mt_help = '''
 Martini Tools functions:
 
@@ -135,6 +123,5 @@ Martini Tools functions:
 - mt_supercell
 - mt_movie
 '''
-
 cmd.sync()
 print(mt_help)

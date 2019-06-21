@@ -22,6 +22,13 @@ def pymolrc():
     cmd.set('cartoon_highlight_color', 'grey50')
     cmd.set('sphere_mode', '9')
 
+    # make sure trajectories are only loaded once defer_builds_mode is 3
+    def load_traj(*args, **kwargs):
+        cmd.set('defer_builds_mode', 3)
+        cmd.sync()
+        cmd.load_traj(*args, **kwargs)
+    cmd.extend('load_traj', load_traj)
+
 
 def trajectory():
     """

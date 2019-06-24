@@ -1,5 +1,6 @@
 from pymol import cmd, stored
 import random
+import re
 
 
 def nice_settings():
@@ -134,14 +135,17 @@ def nice_settings():
 
 def mt_sele(delete=None):
     """
-    easily select relevant groups of atoms
+DESCRIPTION
 
-    Usage:
+    easily select relevant groups of atoms in a martini system
 
-    to create selections: mt_sele
-    to delete them: mt_sele delete
+USAGE
 
-    See also: mt_desele
+    mt_sele [delete]
+
+ARGUMENTS
+
+    delete = if set, will delete the selections instead of creating them
     """
     if delete:
         if delete == 'delete':
@@ -159,6 +163,20 @@ def mt_sele(delete=None):
 
 
 def mt_color(method, selection='all'):
+    """
+DESCRIPTION
+
+    color a selection with unique colors based on atom properties exposed by iterate
+
+USAGE
+
+    mt_color method [, selection]
+
+ARGUMENTS
+
+    method = property that will be used as a method for coloring (e.g.: "resi")
+    selection = selection to act upon
+    """
     stored.tmp_dict = {}
     stored.r_choice = random.choice
     cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.mt_colors)')
@@ -169,7 +187,33 @@ def mt_color(method, selection='all'):
     cmd.sync()
 
 
+def mt_vdw(selection='all'):
+    N_bead = re.compile('[QPNCX][\w\d]|W')
+    S_bead = re.compile('S[QPNCX][\w\d]|W')
+    T_bead = re.compile('T[QPNCX][\w\d]|W')
+
+    def alter_vdw():
+        # TODO: need to get more info from parse_top and parse_tpr!
+        pass
+
+    cmd.alter(selection, 'alter_vdw("name")')
+
+
 def mt_nice(main_sele='all', style='clean'):
+    """
+DESCRIPTION
+
+    apply a nice preset for the visualization of a martini molecular system
+
+USAGE
+
+    mt_nice [, selection [, style]]
+
+ARGUMENTS
+
+    selection (default='all')
+    style = one of clean|pretty (default='clean')
+    """
     mt_sele()
 
     cmd.set('stick_radius', 0.7)

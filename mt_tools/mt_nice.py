@@ -216,6 +216,8 @@ ARGUMENTS
     """
     mt_sele()
 
+    cmd.set('stick_radius', 0.7)
+
     settings = stored.mt_nice_set[style]
     for sele, commands in settings.items():
         for command in commands.values():

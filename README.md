@@ -5,9 +5,10 @@ when using pymol to visualize Martini coarse-grained trajectories.
 
 # Installation
 
-To download the repo, use:
+Just clone the repo:
 ```
-git clone --recurse-submodules
+git clone
+cd ./mt_tools
 ```
 
 # Usage
@@ -54,8 +55,7 @@ mt_nice selection
 ### mt_sele
 To automatically create (or delete) commonly used selections, such as `lip` for lipids and `BB` for backbone beads:
 ```
-mt_sele
-mt_desele
+mt_sele [delete]
 ```
 
 ### mt_color 
@@ -78,6 +78,7 @@ WARNING: Pymol creates aactual copies of the system, so this is an expensive com
 Source: https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py
 
 ## mt_movie
-Makes a nice ray-traced movie of the trajectory.
-
-**TODO**
+Makes a nice ray-traced movie of the trajectory. A few movie templates are available (see `help mt_movie`). Try:
+```
+mt_movie matrix, test_movie
+```

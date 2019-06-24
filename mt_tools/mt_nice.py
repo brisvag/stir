@@ -216,11 +216,6 @@ ARGUMENTS
     """
     mt_sele()
 
-    cmd.set('stick_radius', 0.7)
-
-    # TODO: a nicer way to do this?
-    cmd.color('blue', f'{main_sele} and solv')
-
     settings = stored.mt_nice_set[style]
     for sele, commands in settings.items():
         for command in commands.values():

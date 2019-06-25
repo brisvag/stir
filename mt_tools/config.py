@@ -15,6 +15,7 @@ def pymolrc():
 
     # color space
     cmd.space('pymol')
+    cmd.bg_color('white')
 
     # nicer visualization
     cmd.set('valence', 'on')
@@ -46,7 +47,7 @@ def rendering():
     # ray trace movie options
     cmd.set('ray_trace_frames', 'off')  # can be turned on at conversion
     cmd.set('movie_loop', 'on')
-    cmd.set('opaque_background', 'off')
+    cmd.set('opaque_background', 'off')     # useless for movies, but not figures
     cmd.set('movie_auto_interpolate', 'off')
     cmd.set('movie_auto_store', 'off')
 
@@ -56,6 +57,7 @@ def rendering():
     cmd.set('line_smooth', 'on')
 
     cmd.set('depth_cue', 'off')
+    cmd.set('fog', 'off')
 
     # lighting both in- and outside of a surface
     cmd.set('two_sided_lighting', 'on')

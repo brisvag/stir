@@ -40,6 +40,7 @@ ARGUMENTS
     cmd.sync()
 
     # initialize movie frames
+    cmd.mdelete()
     cmd.mview('reset')
     frames = duration*30
     cmd.mset(f'1x{frames}')
@@ -63,7 +64,7 @@ ARGUMENTS
             cmd.mview('store', object=obj)
             cmd.sync()
         for i in range(4):
-            frame = (frames * (i+1)/4)
+            frame = int(frames * (i+1)/4)
             cmd.frame(frame)
             cmd.sync()
             for obj in cmd.get_object_list():
@@ -81,7 +82,7 @@ ARGUMENTS
     # save if required, otherwise just play it
     if savefile:
         cmd.viewport(width, height)
-        movie.produce(f'{savefile}.mp4', mode=mode, encoder='mpeg_encode', quality=100)
+        movie.produce(f'{savefile}.mp4', mode=mode, encoder='ffmpeg', quality=100)
     else:
         cmd.mplay()
 

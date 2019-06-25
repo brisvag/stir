@@ -10,7 +10,7 @@ import pymol
 from pymol import cmd
 import __main__
 import psutil
-import pycg_bonds.pycg_bonds as pycg_bonds
+from skewer import skewer
 
 # local imports
 from mt_tools import config
@@ -47,7 +47,7 @@ if args.traj:
         traj_size += os.path.getsize(clean_path(traj))
     water_ratio = 1
     if not args.keepwater:
-        # TODO: VERY arbitrary number. When pycg_bonds parsing is a module, use that!
+        # TODO: VERY arbitrary number. When skewer's parsing is a module, use that!
         water_ratio = 1/2
     # check if there's enough free memory: 5 is based on some testing
     if freemem < 5*(traj_size/args.skip):
@@ -74,8 +74,8 @@ mt_nice.load()
 mt_supercell.load()
 mt_movie.load()
 
-# load pycg_bonds
-pycg_bonds.main()
+# load skewer
+skewer.load()
 cmd.sync()
 
 # open the structure
@@ -99,15 +99,15 @@ if not args.keepwater:
     cmd.remove('resname W or resname WN')
     cmd.sync()
 
-# run pycg_bonds with as many arguments as we got
-cg_bond_args = []
+# run skewer with as many arguments as we got
+skewer_args = []
 if args.topol:
-    cg_bond_args.append(clean_path(args.topol))
+    skewer_args.append(clean_path(args.topol))
 if args.gmx:
-    cg_bond_args.append(f'gmx={args.gmx}')
-cg_bond_args = ', '.join(cg_bond_args)
+    skewer_args.append(f'gmx={args.gmx}')
+skewer_args = ', '.join(skewer_args)
 
-cmd.do(f'cg_bonds {cg_bond_args}')
+cmd.do(f'skewer {skewer_args}')
 cmd.sync()
 
 # run mt_nice with the `clean` setting
@@ -118,7 +118,7 @@ cmd.sync()
 mt_help = '''
 Martini Tools functions:
 
-- cg_bonds
+- skewer
 - mt_nice, mt_sele, mt_color
 - mt_supercell
 - mt_movie

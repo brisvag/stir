@@ -76,7 +76,7 @@ mt_supercell.load()
 mt_movie.load()
 
 # load garnish
-garnish.load()
+garnish.extend_garnish()
 cmd.sync()
 
 # open the structure

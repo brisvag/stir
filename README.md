@@ -33,15 +33,15 @@ Wrapper for pymol and most of the other tools.
 ```
 mt_pymol system.gro topol.top md.xtc
 ```
-Initializes with the repo's `pymolrc` and automatically runs `skewer` and `mt_sele`. 
+Initializes with the repo's `pymolrc` and automatically runs `garnish` and `mt_sele`. 
 Also loads `mt_supercell` and `mt_movie` to be used when needed.
 
-## skewer
+## garnish
 Draws bonds and elastic network for coarse-grained systems.
 ```
-skewer selection [, tpr_file|top_file]
+garnish selection [, tpr_file|top_file]
 ```
-Source: https://github.com/mjtadema/skewer
+Source: https://github.com/mjtadema/garnish
 
 ## mt_nice
 Provides a series of function for easy selection and visualization.

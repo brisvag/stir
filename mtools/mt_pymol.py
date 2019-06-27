@@ -10,7 +10,7 @@ import pymol
 from pymol import cmd
 import __main__
 import psutil
-from skewer import skewer
+from garnish import garnish
 
 # local imports
 from mtools import config
@@ -47,7 +47,7 @@ if args.traj:
         traj_size += os.path.getsize(clean_path(traj))
     water_ratio = 1
     if not args.keepwater:
-        # TODO: VERY arbitrary number. When skewer's parsing is a module, use that!
+        # TODO: VERY arbitrary number. When garnish's parsing is a module, use that!
         #       EDIT: I will probably leave it like this. Unnecessary and complex to use parse_tpr
         water_ratio = 1/2
     # check if there's enough free memory: 5 is based on some testing
@@ -75,8 +75,8 @@ mt_nice.load()
 mt_supercell.load()
 mt_movie.load()
 
-# load skewer
-skewer.load()
+# load garnish
+garnish.load()
 cmd.sync()
 
 # open the structure
@@ -100,15 +100,15 @@ if not args.keepwater:
     cmd.remove('resname W or resname WN')
     cmd.sync()
 
-# run skewer with as many arguments as we got
-skewer_args = []
+# run garnish with as many arguments as we got
+garnish_args = []
 if args.topol:
-    skewer_args.append(clean_path(args.topol))
+    garnish_args.append(clean_path(args.topol))
 if args.gmx:
-    skewer_args.append(f'gmx={args.gmx}')
-skewer_args = ', '.join(skewer_args)
+    garnish_args.append(f'gmx={args.gmx}')
+garnish_args = ', '.join(garnish_args)
 
-cmd.do(f'skewer {skewer_args}')
+cmd.do(f'garnish {garnish_args}')
 cmd.sync()
 
 # run mt_nice with the `clean` setting
@@ -119,7 +119,7 @@ cmd.sync()
 mt_help = '''
 Martini Tools functions:
 
-- skewer
+- garnish
 - mt_nice, mt_sele, mt_color
 - mt_supercell
 - mt_movie

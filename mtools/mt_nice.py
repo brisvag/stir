@@ -2,7 +2,7 @@ from pymol import cmd, stored
 import random
 import re
 import os
-from skewer import parse_top, parse_tpr
+from garnish import parse_top, parse_tpr
 
 
 def nice_settings():

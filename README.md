@@ -7,8 +7,7 @@ when using pymol to visualize Martini coarse-grained trajectories.
 
 Just clone the repo:
 ```
-git clone
-cd ./mtools
+pip install git+git://github.com/martinitoolspymol/mtools.git#egg=mtools
 ```
 
 # Usage

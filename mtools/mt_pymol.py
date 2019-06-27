@@ -15,9 +15,9 @@ import psutil
 from garnish import garnish
 
 # local imports
-from mtools import config
-from mtools import mt_movie, mt_nice, mt_supercell
-from mtools.utils import valid_str, valid_top, valid_traj, clean_path
+from . import config
+from . import mt_movie, mt_nice, mt_supercell
+from .utils import valid_str, valid_top, valid_traj, clean_path
 
 
 parser = argparse.ArgumentParser(prog='mt_pymol')

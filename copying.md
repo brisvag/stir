@@ -89,4 +89,5 @@ I'd be happy to see it used in other projects; you're free to use this file
 (`copying.md`) as a template for your project's legal documentation.
 
 ------
-This file was based on `copying.md` in [https://github.com/SFTtech/openage].
+
+This file was based on `copying.md` in https://github.com/SFTtech/openage.

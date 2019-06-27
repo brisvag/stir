@@ -1,3 +1,5 @@
+# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+
 #!/usr/bin/env python3
 
 """

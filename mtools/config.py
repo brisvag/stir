@@ -1,3 +1,5 @@
+# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+
 """
 configuration functions for pymol containing a collection of settings for a specific purpose
 """

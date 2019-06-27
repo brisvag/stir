@@ -7,7 +7,7 @@ with open("README.md", 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
-        name="mtools-pymol",
+        name="martinitoolspymol",
         version="",
         author="Lorenzo Gaifas",
         author_email="brisvag@gmail.com",

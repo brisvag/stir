@@ -7,19 +7,19 @@ when using pymol to visualize Martini coarse-grained trajectories.
 
 Just clone the repo:
 ```
-pip install git+git://github.com/martinitoolspymol/mtools.git#egg=mtools
+pip install git+git://github.com/martinitoolspymol/mtools.git#egg=martinitoolspymol
 ```
 
 # Usage
 
 To open pymol and automatically run all the default tools, run:
 ```
-./mtools/mt_pymol.py
+python -m mtools
 ```
 
 To make it easier to launch it from anywhere, add an alias in your `~/.bashrc`:
 ```
-alias mt_pymol="/path/to/mt_pymol.py"
+alias mt_pymol="python -m mtools"
 ```
 
 Alternatively, you can run the individual tools from pymol (or add them to you `~/.pymolrc.pml`)

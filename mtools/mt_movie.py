@@ -1,7 +1,7 @@
 from pymol import cmd, movie
 
 # local imports
-from mt_tools import config
+from mtools import config
 
 
 def mt_movie(movie_type, savefile=None, duration=5, mode='ray', width=1920, height=1080):

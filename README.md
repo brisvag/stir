@@ -8,14 +8,14 @@ when using pymol to visualize Martini coarse-grained trajectories.
 Just clone the repo:
 ```
 git clone
-cd ./mt_tools
+cd ./mtools
 ```
 
 # Usage
 
 To open pymol and automatically run all the default tools, run:
 ```
-./mt_tools/mt_pymol.py
+./mtools/mt_pymol.py
 ```
 
 To make it easier to launch it from anywhere, add an alias in your `~/.bashrc`:
@@ -29,7 +29,7 @@ and then use their functions from within pymol as normal.
 # Tools
 
 ## mt_pymol
-Wrapper for most of the other tools.
+Wrapper for pymol and most of the other tools.
 ```
 mt_pymol system.gro topol.top md.xtc
 ```

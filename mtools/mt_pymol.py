@@ -13,9 +13,9 @@ import psutil
 from skewer import skewer
 
 # local imports
-from mt_tools import config
-from mt_tools import mt_movie, mt_nice, mt_supercell
-from mt_tools.utils import valid_str, valid_top, valid_traj, clean_path
+from mtools import config
+from mtools import mt_movie, mt_nice, mt_supercell
+from mtools.utils import valid_str, valid_top, valid_traj, clean_path
 
 
 parser = argparse.ArgumentParser(prog='mt_pymol')
@@ -48,6 +48,7 @@ if args.traj:
     water_ratio = 1
     if not args.keepwater:
         # TODO: VERY arbitrary number. When skewer's parsing is a module, use that!
+        #       EDIT: I will probably leave it like this. Unnecessary and complex to use parse_tpr
         water_ratio = 1/2
     # check if there's enough free memory: 5 is based on some testing
     if freemem < 5*(traj_size/args.skip):
@@ -68,7 +69,7 @@ if args.traj:
 __main__.pymol_argv = ['pymol']
 pymol.finish_launching()
 
-# run pymolrc and load all the mt_tools
+# run pymolrc and load all the mtools
 config.pymolrc()
 mt_nice.load()
 mt_supercell.load()

@@ -1,11 +1,13 @@
 from pymol import cmd, stored
 import random
 import re
+import os
+from skewer import parse_top, parse_tpr
 
 
 def nice_settings():
     """
-    sets up a series of settings and stores in pymol.stored to be used at later points by mt_tools
+    sets up a series of settings and stores in pymol.stored to be used at later points by mtools
 
     parts:
     - a set of nicely distinguishable colors for mt_color
@@ -187,16 +189,29 @@ ARGUMENTS
     cmd.sync()
 
 
-def mt_vdw(selection='all'):
+def mt_vdw(topology, selection='all'):
+    """
+    parses the top or tpr file of a martini system and alters vdw radii based on extracted data
+    """
+    # assume topology is a valid file: should be validated before this point
+    if os.path.splitext(topology) == ".tpr":
+        parse = parse_tpr
+    else:
+        parse = parse_top
+
+    system = parse(topology)
+
     N_bead = re.compile('[QPNCX][\w\d]|W')
     S_bead = re.compile('S[QPNCX][\w\d]|W')
     T_bead = re.compile('T[QPNCX][\w\d]|W')
 
-    def alter_vdw():
-        # TODO: need to get more info from parse_top and parse_tpr!
+    def alter_vdw(name):
         pass
 
-    cmd.alter(selection, 'alter_vdw("name")')
+
+    stored.alter_vdw = alter_vdw
+
+    cmd.alter(selection, 'stored.alter_vdw("name")')
 
 
 def mt_nice(main_sele='all', style='clean'):

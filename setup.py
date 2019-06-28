@@ -8,7 +8,7 @@ with open("README.md", 'r') as f:
 
 setuptools.setup(
         name="martinitoolspymol",
-        version="",
+        version="0.1-alpha",
         author="Lorenzo Gaifas",
         author_email="brisvag@gmail.com",
         description="Collection of tools to visualize Martini coarse-grained trajectories in PyMOL",
@@ -22,8 +22,9 @@ setuptools.setup(
             "Operating System :: OS Independent",
             ],
         install_requires=[
-            'networkx',
-            'numpy'
+            'pymol',
+            'garnish',
+            'psutil'
             ],
         python_requires='>=3.5'
         )

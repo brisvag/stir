@@ -5,6 +5,7 @@ Python wrapper for pymol to easily visualize martini trajectories
 """
 
 import os
+import sys
 import argparse
 import pymol
 from pymol import cmd
@@ -18,8 +19,16 @@ from . import mt_movie, mt_nice, mt_supercell
 from .utils import valid_str, valid_top, valid_traj, clean_path
 
 
+class MyParser(argparse.ArgumentParser):
+    # print help if calling the program results in an error
+    def error(self, message):
+        sys.stderr.write(f'ERROR: {message}\n\n')
+        self.print_help()
+        sys.exit(2)
+
+
 def main(*args, **kwargs):
-    parser = argparse.ArgumentParser(prog='mt_pymol')
+    parser = MyParser(prog='mt_pymol')
 
     parser.add_argument(dest='struct', type=valid_str,
                         help='gro or similar file containing a martini structure')
@@ -42,7 +51,6 @@ def main(*args, **kwargs):
     #       - running subscripts automatically (mt_supercell...)
 
     args = parser.parse_args()
-
 
     # check if there's enough memory to load the requested traj and warn the user if needed
     if args.traj:

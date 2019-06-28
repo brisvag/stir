@@ -17,7 +17,11 @@ def pymolrc():
 
     # color space
     cmd.space('pymol')
+
+    # environment and color
     cmd.bg_color('white')
+    cmd.set('depth_cue', 'off')
+    cmd.set('fog', 'off')
 
     # nicer visualization
     cmd.set('valence', 'on')
@@ -57,9 +61,6 @@ def rendering():
     util.performance(0)
     cmd.set('hash_max', 1000)
     cmd.set('line_smooth', 'on')
-
-    cmd.set('depth_cue', 'off')
-    cmd.set('fog', 'off')
 
     # lighting both in- and outside of a surface
     cmd.set('two_sided_lighting', 'on')

@@ -28,24 +28,38 @@ class MyParser(argparse.ArgumentParser):
 
 
 def main(*args, **kwargs):
-    parser = MyParser(prog='mt_pymol')
+    parser = MyParser(prog='mt_pymol', description='A python wrapper of martinitools for pymol.',
+                      add_help=False)
 
-    parser.add_argument(dest='struct', type=valid_str,
-                        help='gro or similar file containing a martini structure')
-    parser.add_argument(dest='topol', type=valid_top, default=None, nargs='?',
-                        help='top or tpr file with the topology of the system')
-    parser.add_argument(dest='traj', type=valid_traj, default=None, nargs='*',
-                        help='corresponding trajectory file. If multiple files are given, '
-                             'they are concatenated')
-    parser.add_argument('-s', '--skip', dest='skip', type=int, default=1,
-                        help='when loading a trajectory, load frames with this rate')
-    parser.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
-                        help='path to the gromacs executable')
-    parser.add_argument('--keepwater', dest='keepwater', action='store_true',
-                        help='do not delete waters from the system. Decreases performance')
-    parser.add_argument('-p', '--pymol', dest='pymol', default=[], nargs=argparse.REMAINDER,
-                        help='remaining arguments will be passed to pymol. Accepts options '
-                             'and .pml scripts')
+    help_group = parser.add_argument_group('HELP')
+    help_group.add_argument('-h', '--help', action='help',
+                            help='show this help message and exit')
+
+    req_group = parser.add_argument_group('required arguments')
+    req_group.add_argument(dest='struct', type=valid_str,
+                           help='gro or similar file containing a martini structure')
+
+    pos_group = parser.add_argument_group('positional arguments')
+    pos_group.add_argument(dest='topol', type=valid_top, default=None, nargs='?',
+                           help='top or tpr file with the topology of the system')
+    pos_group.add_argument(dest='traj', type=valid_traj, default=None, nargs='*',
+                           help='corresponding trajectory file. If multiple files are given, '
+                                'they are concatenated')
+
+    opt_group = parser.add_argument_group('optional mt_pymol arguments')
+    opt_group.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
+                           help='path to the gromacs executable')
+    opt_group.add_argument('--keepwater', dest='keepwater', action='store_true',
+                           help='do not delete waters from the system. Decreases performance')
+
+    traj_group = parser.add_argument_group('trajectory arguments')
+    traj_group.add_argument('-s', '--skip', dest='skip', type=int, default=1,
+                            help='when loading a trajectory, load frames with this rate')
+
+    more_group = parser.add_argument_group('additional arguments')
+    more_group.add_argument('-p', '--pymol', dest='pymol', default=[], nargs=argparse.REMAINDER,
+                            help='remaining arguments will be passed to pymol. Accepts options '
+                                 'and .pml scripts')
     # TODO: add more options:
     #       - load_traj start/end...
     #       - running subscripts automatically (mt_supercell...)

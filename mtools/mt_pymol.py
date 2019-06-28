@@ -34,8 +34,12 @@ def main(*args, **kwargs):
                         help='path to the gromacs executable')
     parser.add_argument('--keepwater', dest='keepwater', action='store_true',
                         help='do not delete waters from the system. Decreases performance')
-    # TODO: add more options (load_traj start/end...)
-    # TODO: passing arguments to pymol
+    parser.add_argument('-p', '--pymol', dest='pymol', default=[], nargs=argparse.REMAINDER,
+                        help='remaining arguments will be passed to pymol. Accepts options '
+                             'and .pml scripts')
+    # TODO: add more options:
+    #       - load_traj start/end...
+    #       - running subscripts automatically (mt_supercell...)
 
     args = parser.parse_args()
 
@@ -66,8 +70,16 @@ def main(*args, **kwargs):
                 else:
                     print(f'"{inp}" is not a valid choice. [y/N]')
 
+    pymol_args = []
+    scripts = []
+    for arg in args.pymol:
+        if os.path.splitext(arg)[1] in ('.pml', '.py'):
+            scripts.append(clean_path(arg))
+        else:
+            pymol_args.append(arg)
+
     # initialize pymol
-    __main__.pymol_argv = ['pymol']
+    __main__.pymol_argv = ['pymol'] + pymol_args
     pymol.finish_launching()
 
     # run pymolrc and load all the mtools
@@ -115,6 +127,10 @@ def main(*args, **kwargs):
     # run mt_nice with the `clean` setting
     cmd.do(f'mt_nice not *_elastics')
     cmd.sync()
+
+    # finally run user-provided scripts
+    for scr in scripts:
+        cmd.run(scr)
 
     # print some help after everything is loaded
     mt_help = '''

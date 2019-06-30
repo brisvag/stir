@@ -28,7 +28,12 @@ class MyParser(argparse.ArgumentParser):
 
 
 def main(*args, **kwargs):
-    parser = MyParser(prog='mt_pymol', description='A python wrapper of martinitools for pymol.',
+    parser = MyParser(prog='mt_pymol', description='A python wrapper for martinitools and pymol.',
+                      formatter_class=argparse.RawDescriptionHelpFormatter,
+                      epilog='Examples:\n'
+                             '\tmt_pymol system.gro topol.top md.xtc\n'
+                             '\tmt_pymol system.gro --keep-water -r mt_supercell 3,3,1\n'
+                             '\tmt_pymol system.gro topol.tpr --pymol -qi myscript.pml',
                       add_help=False)
 
     help_group = parser.add_argument_group('HELP')
@@ -46,23 +51,26 @@ def main(*args, **kwargs):
                            help='corresponding trajectory file. If multiple files are given, '
                                 'they are concatenated')
 
-    opt_group = parser.add_argument_group('optional mt_pymol arguments')
+    opt_group = parser.add_argument_group('optional mtools arguments')
+    opt_group.add_argument('--keep-water', dest='keepwater', action='store_true',
+                           help='do not delete waters from the system. Decreases performance')
     opt_group.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
                            help='path to the gromacs executable')
-    opt_group.add_argument('--keepwater', dest='keepwater', action='store_true',
-                           help='do not delete waters from the system. Decreases performance')
+    opt_group.add_argument('-r', '--run-tool', dest='runtool', type=str, default=[], nargs='*',
+                           action='append',
+                           help='a mtools command to be run after loading. (e.g.: '
+                                'mt_supercell 3,3,1). Can be specified multiple times')
 
-    traj_group = parser.add_argument_group('trajectory arguments')
+    traj_group = parser.add_argument_group('optional trajectory arguments')
     traj_group.add_argument('-s', '--skip', dest='skip', type=int, default=1,
-                            help='when loading a trajectory, load frames with this rate')
+                            help='load frames skipping this interval. Useful to reduce memory load')
 
-    more_group = parser.add_argument_group('additional arguments')
+    more_group = parser.add_argument_group('advanced arguments')
     more_group.add_argument('-p', '--pymol', dest='pymol', default=[], nargs=argparse.REMAINDER,
-                            help='remaining arguments will be passed to pymol. Accepts options '
-                                 'and .pml scripts')
+                            help='all following arguments will be passed directly to pymol. '
+                                 'Accepts options and .pml scripts')
     # TODO: add more options:
     #       - load_traj start/end...
-    #       - running subscripts automatically (mt_supercell...)
 
     args = parser.parse_args()
 
@@ -150,9 +158,15 @@ def main(*args, **kwargs):
     cmd.do(f'mt_nice not *_elastics')
     cmd.sync()
 
-    # finally run user-provided scripts
+    # finally run user-requested tools
+    for tool in args.runtool:
+        command = ' '.join(tool)
+        cmd.do(command)
+        cmd.sync()
+    # and user-provided scripts
     for scr in scripts:
         cmd.run(scr)
+        cmd.sync()
 
     # print some help after everything is loaded
     mt_help = '''

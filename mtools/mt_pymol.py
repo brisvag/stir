@@ -10,13 +10,12 @@ import argparse
 import pymol
 from pymol import cmd
 import __main__
-import psutil
 from garnish import garnish
 
 # local imports
 from . import config
 from . import mt_movie, mt_nice, mt_supercell
-from .utils import valid_str, valid_top, valid_traj, clean_path
+from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram
 
 
 class MyParser(argparse.ArgumentParser):
@@ -27,7 +26,7 @@ class MyParser(argparse.ArgumentParser):
         sys.exit(2)
 
 
-def main(*args, **kwargs):
+def main():
     parser = MyParser(prog='mt_pymol', description='A python wrapper for martinitools and pymol.',
                       formatter_class=argparse.RawDescriptionHelpFormatter,
                       epilog='Examples:\n'
@@ -74,31 +73,20 @@ def main(*args, **kwargs):
 
     args = parser.parse_args()
 
-    # check if there's enough memory to load the requested traj and warn the user if needed
     if args.traj:
-        freemem = psutil.virtual_memory().available
-        traj_size = 0
-        for traj in args.traj:
-            traj_size += os.path.getsize(clean_path(traj))
-        water_ratio = 1
-        if not args.keepwater:
-            # TODO: VERY arbitrary number. When garnish's parsing is a module, use that!
-            #       EDIT: I will probably leave it like this. Unnecessary and complex to use parse_tpr
-            water_ratio = 1/2
-        # check if there's enough free memory: 5 is based on some testing
-        if freemem < 5*(traj_size/args.skip):
+        if not enough_ram(args.traj, args.skip):
             ok = False
-            inp = input('WARNING: You may not have enough free memory to open this big trajectory.\n'
-                        'Consider using the trajectory options (-s, ...).\n'
-                        'Otherwise, continue at your own risk ;) [y/N] ')
             while not ok:
+                inp = input('WARNING: You may not have enough free memory to open '
+                            'this big trajectory.\nConsider using the trajectory options to reduce '
+                            'the memory load.\nOtherwise, proceed at your own risk ;) [y/N] ')
                 if inp.lower() in ['yes', 'y']:
                     ok = True
-                elif inp.lower() in ['no', 'n']:
+                elif inp.lower() in ['no', 'n', '']:
                     parser.print_help()
                     exit(0)
                 else:
-                    print(f'"{inp}" is not a valid choice. [y/N]')
+                    print(f'ERROR: "{inp}" is not a valid choice')
 
     pymol_args = []
     scripts = []

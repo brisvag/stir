@@ -5,7 +5,9 @@ when using pymol to visualize Martini coarse-grained trajectories.
 
 # Installation
 
-Just clone the repo:
+You will first need to install [garnish](https://github.com/mjtadema/garnish).
+
+Once you've done that, you can just use pip:
 ```
 pip install git+git://github.com/martinitoolspymol/mtools.git#egg=martinitoolspymol
 ```

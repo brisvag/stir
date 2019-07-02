@@ -27,8 +27,5 @@ setuptools.setup(
             'garnish',
             'psutil',
         ],
-        dependency_links=[
-            'git+ssh://git@github.com/mjtadema/garnish.git#egg=garnish',
-        ],
         python_requires='>=3.5'
         )

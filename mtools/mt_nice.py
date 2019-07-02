@@ -123,7 +123,7 @@ def nice_settings():
                 'color_method': [mt_color, 'name'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
-            'lips': {
+            'lip': {
                 'color_method': [mt_color, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
             },

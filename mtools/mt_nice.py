@@ -72,36 +72,6 @@ def nice_settings():
     # settings to be used by mt_nice. Values are lists with a function as first element and
     # its arguments following
     stored.mt_nice_set = {
-        'rainbow': {
-            'prot': {
-                'color_method': None,
-                'style': None,
-            },
-            'BB': {
-                'color_method': [mt_color, 'chain'],
-                'style': [cmd.show_as, 'sticks'],
-            },
-            'SC': {
-                'color_method': [mt_color, 'resn'],
-                'style': [cmd.show_as, 'sticks'],
-            },
-            'solv': {
-                'color_method': [cmd.color, 'blue'],
-                'style': [cmd.show_as, 'nb_spheres'],
-            },
-            'ions': {
-                'color_method': [mt_color, 'name'],
-                'style': [cmd.show_as, 'nb_spheres'],
-            },
-            'lips': {
-                'color_method': [mt_color, 'resi'],
-                'style': [cmd.show_as, 'sticks'],
-            },
-            'nucl': {
-                'color_method': [mt_color, 'resn'],
-                'style': [cmd.show_as, 'sticks'],
-            },
-        },
         'clean': {
             'prot': {
                 'color_method': None,
@@ -129,6 +99,36 @@ def nice_settings():
             },
             'nucl': {
                 'color_method': [mt_color, 'resi'],
+                'style': [cmd.show_as, 'sticks'],
+            },
+        },
+        'rainbow': {
+            'prot': {
+                'color_method': None,
+                'style': None,
+            },
+            'BB': {
+                'color_method': [mt_color, 'chain'],
+                'style': [cmd.show_as, 'sticks'],
+            },
+            'SC': {
+                'color_method': [mt_color, 'resn'],
+                'style': [cmd.show_as, 'sticks'],
+            },
+            'solv': {
+                'color_method': [cmd.color, 'blue'],
+                'style': [cmd.show_as, 'nb_spheres'],
+            },
+            'ions': {
+                'color_method': [mt_color, 'name'],
+                'style': [cmd.show_as, 'nb_spheres'],
+            },
+            'lips': {
+                'color_method': [mt_color, 'resi'],
+                'style': [cmd.show_as, 'sticks'],
+            },
+            'nucl': {
+                'color_method': [mt_color, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
         },
@@ -241,7 +241,7 @@ def set_vdw(selection='all'):
     cmd.sync()
 
 
-def mt_nice(main_sele='all', style='clean'):
+def mt_nice(style='clean', selection='all'):
     """
 DESCRIPTION
 
@@ -249,12 +249,12 @@ DESCRIPTION
 
 USAGE
 
-    mt_nice [, selection [, style]]
+    mt_nice [, style [, selection]]
 
 ARGUMENTS
 
-    selection (default='all')
     style = one of clean|rainbow|balls (default='clean')
+    selection (default='all')
     """
     # sanitize input
     if style not in ['clean', 'rainbow', 'balls']:
@@ -266,16 +266,16 @@ ARGUMENTS
     cmd.set('stick_radius', 0.7)
     cmd.sync()
     # set correct vdw radii
-    set_vdw(main_sele)
+    set_vdw(selection)
     cmd.sync()
 
     settings = stored.mt_nice_set[style]
-    for sele, commands in settings.items():
+    for sel_type, commands in settings.items():
         for command in commands.values():
             if command:
                 # run function with its arguments. All functions must have `selection` as
                 # valid argument for this to work!
-                command[0](*command[1:], selection=f'{main_sele} and {sele}')
+                command[0](*command[1:], selection=f'{selection} and {sel_type}')
             else:
                 continue
 

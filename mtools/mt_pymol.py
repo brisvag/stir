@@ -143,7 +143,7 @@ def main():
     cmd.sync()
 
     # run mt_nice with the `clean` setting
-    cmd.do(f'mt_nice not *_elastics')
+    cmd.do(f'mt_nice selection="not *_elastics"')
     cmd.sync()
 
     # finally run user-requested tools

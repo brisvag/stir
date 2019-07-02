@@ -48,7 +48,7 @@ Provides a series of function for easy selection and visualization.
 ### mt_nice
 Wraps other subtools to select, colors and shows molecules nicely.
 ```
-mt_nice selection
+mt_nice [style [, selection]]
 ```
 
 ### mt_sele

@@ -3,8 +3,6 @@
 from pymol import cmd, stored
 import random
 import re
-import os
-from garnish import parse_top, parse_tpr
 
 
 def nice_settings():
@@ -67,7 +65,7 @@ def nice_settings():
         'SC': 'polymer.protein and name SC*',
         'solv': 'resn W or resn WN or resn ION',
         'ions': 'resn ION',
-        'lip': 'organic',
+        'lip': 'organic and not ions',
         'nucl': 'polymer.nucleic'
     }
 
@@ -89,11 +87,11 @@ def nice_settings():
             },
             'solv': {
                 'color_method': [cmd.color, 'blue'],
-                'style': [cmd.hide, 'everything'],
+                'style': [cmd.show_as, 'nb_spheres'],
             },
             'ions': {
-                'color_method': [mt_color, 'resn'],
-                'style': [cmd.show_as, 'spheres'],
+                'color_method': [mt_color, 'name'],
+                'style': [cmd.show_as, 'nb_spheres'],
             },
             'lips': {
                 'color_method': [mt_color, 'resi'],
@@ -132,6 +130,36 @@ def nice_settings():
             'nucl': {
                 'color_method': [mt_color, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
+            },
+        },
+        'balls': {
+            'prot': {
+                'color_method': None,
+                'style': None,
+            },
+            'BB': {
+                'color_method': [cmd.color, 'purple'],
+                'style': [cmd.show_as, 'spheres'],
+            },
+            'SC': {
+                'color_method': [cmd.color, 'red'],
+                'style': [cmd.show_as, 'spheres'],
+            },
+            'solv': {
+                'color_method': [cmd.color, 'blue'],
+                'style': [cmd.show_as, 'nb_spheres'],
+            },
+            'ions': {
+                'color_method': [mt_color, 'resn'],
+                'style': [cmd.show_as, 'nb_spheres'],
+            },
+            'lip': {
+                'color_method': [mt_color, 'resn'],
+                'style': [cmd.show_as, 'spheres'],
+            },
+            'nucl': {
+                'color_method': [mt_color, 'resi'],
+                'style': [cmd.show_as, 'spheres'],
             },
         },
     }
@@ -191,29 +219,26 @@ ARGUMENTS
     cmd.sync()
 
 
-def mt_vdw(topology, selection='all'):
+def set_vdw(selection='all'):
     """
-    parses the top or tpr file of a martini system and alters vdw radii based on extracted data
+    alters vdw radii based on bead type provided by garnish
     """
-    # assume topology is a valid file: should be validated before this point
-    if os.path.splitext(topology) == ".tpr":
-        parse = parse_tpr
-    else:
-        parse = parse_top
-
-    system = parse(topology)
-
-    N_bead = re.compile('[QPNCX][\w\d]|W')
-    S_bead = re.compile('S[QPNCX][\w\d]|W')
-    T_bead = re.compile('T[QPNCX][\w\d]|W')
-
-    def alter_vdw(name):
-        pass
-
+    def alter_vdw(elem, vdw):
+        vdw_patterns = {
+            re.compile('[QPNCX][\w\d]|W'): 2.35,
+            re.compile('S([QPNCX][\w\d]|W)'): 2.00,
+            re.compile('T([QPNCX][\w\d]|W)'): 1.65,
+        }
+        for pattern, radius in vdw_patterns.items():
+            if pattern.match(elem):
+                return radius
+        # TODO: if anything goes wrong, just return the original vdw for now
+        return vdw
 
     stored.alter_vdw = alter_vdw
 
-    cmd.alter(selection, 'stored.alter_vdw("name")')
+    cmd.alter(selection, 'vdw=stored.alter_vdw(elem, vdw)')
+    cmd.sync()
 
 
 def mt_nice(main_sele='all', style='clean'):
@@ -229,11 +254,20 @@ USAGE
 ARGUMENTS
 
     selection (default='all')
-    style = one of clean|pretty (default='clean')
+    style = one of clean|rainbow|balls (default='clean')
     """
+    # sanitize input
+    if style not in ['clean', 'rainbow', 'balls']:
+        print(f'Error: {style} is not a valid option. See help mt_nice')
+        return
+
     mt_sele()
 
     cmd.set('stick_radius', 0.7)
+    cmd.sync()
+    # set correct vdw radii
+    set_vdw(main_sele)
+    cmd.sync()
 
     settings = stored.mt_nice_set[style]
     for sele, commands in settings.items():

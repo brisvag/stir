@@ -19,9 +19,9 @@ USAGE
 
 ARGUMENTS
 
-    movie_type = one of traj, matrix
+    movie_type = one of:
         - traj: records the whole trajectory
-        - matrix: a whole revolution around the z axis
+        - bullettime: a whole revolution around the z axis
     savefile = file name to use to save the movie, without extension. If not given,
                the movie won't be save but only shown (default=None)
     duration = duration in seconds of the final movie (default=5)
@@ -58,7 +58,7 @@ ARGUMENTS
         cmd.sync()
 
     # make a movie rotating 360 around the z axis
-    if movie_type == 'matrix':
+    if movie_type == 'bullettime':
         cmd.mview('store', 1)
         cmd.mview('store', frames)
         # TODO: moving objects seems a bit hacky. Any better solution?

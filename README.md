@@ -79,5 +79,5 @@ Source: https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py
 ## mt_movie
 Makes a nice ray-traced movie of the trajectory. A few movie templates are available (see `help mt_movie`). Try:
 ```
-mt_movie matrix, test_movie, width=640, height=480
+mt_movie bullettime, test_movie, width=640, height=480
 ```

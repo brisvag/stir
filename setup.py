@@ -15,7 +15,7 @@ setuptools.setup(
         description='Collection of tools to visualize Martini coarse-grained trajectories in PyMOL',
         long_description=long_description,
         long_description_content_type='text/markdown',
-        url='https://github.com/martinitoolspymol/mtools',
+        url='https://github.com/brisvag/mtools',
         packages=setuptools.find_packages(),
         classifiers=[
             'Programming Language :: Python :: 3',

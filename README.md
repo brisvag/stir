@@ -1,5 +1,7 @@
 # Simple Trajectory Inspection and Representation
 
+-- _**Stirred**, not shaken._
+
 **STIR** is a wrapper for [PyMOL](https://github.com/schrodinger/pymol-open-source) that provides a
 collection of tools for the visualization of [gromacs](ww.gromacs.org) molecular dynamics trajectories.
 

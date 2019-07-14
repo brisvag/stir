@@ -1,4 +1,4 @@
-# Simple Trajectory Inspection and Representation
+# Simple Trajectory InspectoR
 
 -- _**Stirred**, not shaken._
 

@@ -1,11 +1,11 @@
 # Simple Trajectory InspectoR
 
--- _**Stirred**, not shaken._
+-- "_**Stirred**, not shaken._"
 
 **STIR** is a wrapper for [PyMOL](https://github.com/schrodinger/pymol-open-source) that provides a
-collection of tools for the visualization of [gromacs](ww.gromacs.org) molecular dynamics trajectories.
+collection of tools for the visualization of [gromacs](www.gromacs.org) molecular dynamics trajectories.
 
-Its main focus are [Martini coarse-grained systems](cgmartini.nl).
+Its main focus are [Martini coarse-grained systems](www.cgmartini.nl).
 
 # Installation
 
@@ -18,9 +18,9 @@ pip install git+git://github.com/brisvag/stir.git#egg=stir
 ```
 pip will automatically add the `stir` command to your `PATH`.
 
-# Usage
+# How to `stir` your Martini
 
-Use `stir` to open pymol and automatically run all the default tools. Check out the help with:
+Use `stir` to open PyMOL and automatically run all the default tools. Check out the help with:
 ```bash
 stir -h
 ```
@@ -30,7 +30,7 @@ For example, to load a typical system:
 stir system.gro topol.top md.xtc
 ```
 `stir` initializes PyMOL with its own `pymolrc` and automatically runs `garnish` and `nice`.
-It also loads the other tools, ready to be used from within pymol. 
+It also loads the other tools, ready to be used from within PyMOL. 
 
 ---
 

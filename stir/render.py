@@ -6,7 +6,7 @@ from pymol import cmd, movie
 from . import config
 
 
-def mt_movie(movie_type, savefile=None, duration=5, mode='ray', width=1920, height=1080):
+def cheese(movie_type, savefile=None, duration=5, mode='ray', width=1920, height=1080):
     """
 DESCRIPTION
 
@@ -15,7 +15,7 @@ DESCRIPTION
 
 USAGE
 
-    mt_movie movie_type [, savefile [, duration [, mode [, width [, height]]]]]
+    cheese movie_type [, savefile [, duration [, mode [, width [, height]]]]]
 
 ARGUMENTS
 
@@ -34,7 +34,7 @@ ARGUMENTS
 #    # store settings for later restoration
 #    store_settings.load()
 #    cmd.sync()
-#    settings_file = '/tmp/mt_settings.py'
+#    settings_file = '/tmp/stir_settings.py'
 #    cmd.do(f'store_settings {settings_file}')
 
     # load nice settings for rendering
@@ -56,9 +56,8 @@ ARGUMENTS
         cmd.sync()
         cmd.mview('reinterpolate')
         cmd.sync()
-
     # make a movie rotating 360 around the z axis
-    if movie_type == 'bullettime':
+    elif movie_type == 'bullettime':
         cmd.mview('store', 1)
         cmd.mview('store', frames)
         # TODO: moving objects seems a bit hacky. Any better solution?
@@ -79,7 +78,7 @@ ARGUMENTS
         cmd.mview('reinterpolate')
         cmd.sync()
     else:
-        raise ValueError(f'{movie_type} is not a valid argument. See `help mt_movie`.')
+        raise ValueError(f'{movie_type} is not a valid argument. See `help cheese`.')
 
     # save if required, otherwise just play it
     if savefile:
@@ -93,7 +92,7 @@ ARGUMENTS
 
 
 def load():
-    cmd.extend('mt_movie', mt_movie)
+    cmd.extend('cheese', cheese)
 
 
 if __name__ == 'pymol':

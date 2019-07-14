@@ -9,7 +9,7 @@ import argparse
 import psutil
 
 
-# used by the argument parser to check if input files are valid
+# functions used by the argument parser to check if input files are valid
 def valid_str(param):
     _, ext = os.path.splitext(param)
     if ext.lower() not in ('.gro',) or not os.path.isfile(param):
@@ -17,7 +17,6 @@ def valid_str(param):
     return param
 
 
-# used by the argument parser to check if input files are valid
 def valid_traj(param):
     _, ext = os.path.splitext(param)
     if ext.lower() not in ('.xtc',) or not os.path.isfile(param):
@@ -25,7 +24,6 @@ def valid_traj(param):
     return param
 
 
-# used by the argument parser to check if input files are valid
 def valid_top(param):
     _, ext = os.path.splitext(param)
     if ext.lower() not in ('.top', '.itp', '.tpr') or not os.path.isfile(param):

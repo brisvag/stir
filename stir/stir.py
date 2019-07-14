@@ -14,7 +14,7 @@ from garnish import garnish
 
 # local imports
 from . import config
-from . import mt_movie, mt_nice, mt_supercell
+from . import render, view, supercell
 from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram
 
 
@@ -27,12 +27,12 @@ class MyParser(argparse.ArgumentParser):
 
 
 def main():
-    parser = MyParser(prog='mt_pymol', description='A python wrapper for martinitools and pymol.',
+    parser = MyParser(prog='stir', description='A python wrapper for pymol and several tools and scripts.',
                       formatter_class=argparse.RawDescriptionHelpFormatter,
                       epilog='Examples:\n'
-                             '\tmt_pymol system.gro topol.top md.xtc\n'
-                             '\tmt_pymol system.gro --keep-water -r mt_supercell 3,3,1\n'
-                             '\tmt_pymol system.gro topol.tpr --pymol -qi myscript.pml',
+                             '\tstir system.gro topol.top md.xtc\n'
+                             '\tstir system.gro --keep-water -r supercell 3,3,1\n'
+                             '\tstir system.gro topol.tpr --pymol -qi myscript.pml',
                       add_help=False)
 
     help_group = parser.add_argument_group('HELP')
@@ -57,8 +57,8 @@ def main():
                            help='path to the gromacs executable')
     opt_group.add_argument('-r', '--run-tool', dest='runtool', type=str, default=[], nargs='*',
                            action='append',
-                           help='a stir command to be run after loading. (e.g.: '
-                                'mt_supercell 3,3,1). Can be specified multiple times')
+                           help='a command to be run after loading. (e.g.: supercell 3,3,1).'
+                                'Can be specified multiple times')
 
     traj_group = parser.add_argument_group('optional trajectory arguments')
     traj_group.add_argument('-s', '--skip', dest='skip', type=int, default=1,
@@ -102,9 +102,9 @@ def main():
 
     # run pymolrc and load all the stir
     config.pymolrc()
-    mt_nice.load()
-    mt_supercell.load()
-    mt_movie.load()
+    view.load()
+    supercell.load()
+    render.load()
 
     # load garnish
     garnish.extend_garnish()
@@ -142,8 +142,8 @@ def main():
     cmd.do(f'garnish {garnish_args}')
     cmd.sync()
 
-    # run mt_nice with the `clean` setting
-    cmd.do(f'mt_nice selection="not *_elastics"')
+    # run nice with the `clean` setting
+    cmd.do(f'nice selection="not *_elastics"')
     cmd.sync()
 
     # finally run user-requested tools
@@ -157,13 +157,13 @@ def main():
         cmd.sync()
 
     # print some help after everything is loaded
-    mt_help = '''
-    Martini Tools functions:
+    stir_help = '''
+    STIR functions:
 
     - garnish
-    - mt_nice, mt_sele, mt_color
-    - mt_supercell
-    - mt_movie
+    - nice, nicesele, nicecolor
+    - supercell
+    - cheese
     '''
     cmd.sync()
-    print(mt_help)
+    print(stir_help)

@@ -95,6 +95,6 @@ def rendering():
 
 
 if __name__ == 'pymol':
-    cmd.extend('mt_config_pymolrc', pymolrc)
-    cmd.extend('mt_config_trajectory', trajectory)
-    cmd.extend('mt_config_rendering', rendering)
+    cmd.extend('stir_config_pymolrc', pymolrc)
+    cmd.extend('stir_config_trajectory', trajectory)
+    cmd.extend('stir_config_rendering', rendering)

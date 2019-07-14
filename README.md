@@ -1,39 +1,40 @@
-# Martini Pymol Tools
+# Simple Trajectory InspectoR
 
-This repository is a collection of tools that will make your life easier
-when using pymol to visualize Martini coarse-grained trajectories.
+-- "_**Stirred**, not shaken._"
+
+**STIR** is a wrapper for [PyMOL](https://github.com/schrodinger/pymol-open-source) that provides a
+collection of tools for the visualization of [gromacs](www.gromacs.org) molecular dynamics trajectories.
+
+Its main focus are [Martini coarse-grained systems](www.cgmartini.nl).
 
 # Installation
 
-Just clone the repo:
+Grab the latest PyMOL from [here](https://github.com/schrodinger/pymol-open-source). You will also
+have to install [garnish](https://github.com/mjtadema/garnish).
+
+Once you've done that, you can just use pip:
+```bash
+pip install git+git://github.com/brisvag/stir.git#egg=stir
 ```
-pip install git+git://github.com/martinitoolspymol/mtools.git#egg=martinitoolspymol
+pip will automatically add the `stir` command to your `PATH`.
+
+# How to `stir` your Martini
+
+Use `stir` to open PyMOL and automatically run all the default tools. Check out the help with:
+```bash
+stir -h
 ```
 
-# Usage
+For example, to load a typical system:
+```bash
+stir system.gro topol.top md.xtc
+```
+`stir` initializes PyMOL with its own `pymolrc` and automatically runs `garnish` and `nice`.
+It also loads the other tools, ready to be used from within PyMOL. 
 
-To open pymol and automatically run all the default tools, run:
-```
-python -m mtools
-```
-
-To make it easier to launch it from anywhere, add an alias in your `~/.bashrc`:
-```
-alias mt_pymol="python -m mtools"
-```
-
-Alternatively, you can run the individual tools from pymol (or add them to you `~/.pymolrc.pml`)
-and then use their functions from within pymol as normal.
+---
 
 # Tools
-
-## mt_pymol
-Wrapper for pymol and most of the other tools.
-```
-mt_pymol system.gro topol.top md.xtc
-```
-Initializes with the repo's `pymolrc` and automatically runs `garnish` and `mt_sele`. 
-Also loads `mt_supercell` and `mt_movie` to be used when needed.
 
 ## garnish
 Draws bonds and elastic network for coarse-grained systems.
@@ -42,42 +43,45 @@ garnish selection [, tpr_file|top_file]
 ```
 Source: https://github.com/mjtadema/garnish
 
-## mt_nice
-Provides a series of function for easy selection and visualization.
+## nice
+Provides a series of functions for easy selection and visualization.
 
-### mt_nice
-Wraps other subtools to select, colors and shows molecules nicely.
+#### nice
+Wraps other subtools to select, color and show molecules nicely.
 ```
-mt_nice selection
+nice [style [, selection]]
 ```
 
-### mt_sele
+#### nicesele
 To automatically create (or delete) commonly used selections, such as `lip` for lipids and `BB` for backbone beads:
 ```
-mt_sele [delete]
+nicesele [delete]
 ```
 
-### mt_color 
-Color all atoms in the selection based on a common identification (chain id, residue id...).
+#### nicecolor 
+Color all atoms in the selection with the same random color based on a common identifier (chain id, residue name...).
+To see a list of all the options, check out [PyMOL's iterate command](https://pymolwiki.org/index.php/Iterate).
 ```
-mt_color resi|chain|name|... [, selection]
+nicecolor resi|chain|name|... [, selection]
 ```
 
-## mt_supercell
+## supercell
 Shows periodic images. To show a 3x3 grid in the x,y plane:
 ```
-mt_supercell 3,3,1
+supercell 3,3,1
 ```
 To show first 2 neighbouring cells in the z direction:
 ```
-mt_supercell 1,1,5
+supercell 1,1,5
 ```
-WARNING: Pymol creates aactual copies of the system, so this is an expensive command!
-
 Source: https://github.com/speleo3/pymol-psico/blob/master/psico/xtal.py
 
-## mt_movie
-Makes a nice ray-traced movie of the trajectory. A few movie templates are available (see `help mt_movie`). Try:
+## cheese
+Makes a nice, ray-traced picture or movie of the system. A few options are available (see `help cheese`). Try:
 ```
-mt_movie matrix, test_movie, width=640, height=480
+cheese snap
+```
+to take a quick ray-traced picture. For a movie, try:
+```
+cheese bullettime, test_movie, width=640, height=480
 ```

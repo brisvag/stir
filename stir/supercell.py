@@ -1,4 +1,4 @@
-# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+# Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
 """
 Based on psico/xtal.py, (c) Thomas Holder
@@ -173,11 +173,11 @@ SEE ALSO
 
 
 def load():
-    cmd.extend('mt_symexpcell', symexpcell)
-    cmd.extend('mt_supercell', supercell)
+    cmd.extend('symexpcell', symexpcell)
+    cmd.extend('supercell', supercell)
 
     # tab-completion of arguments
-    cmd.auto_arg[3]['mt_supercell'] = [cmd.object_sc, 'object', '']
+    cmd.auto_arg[3]['supercell'] = [cmd.object_sc, 'object', '']
 
 
 if __name__ == 'pymol':

@@ -1,4 +1,4 @@
-# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+# Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
 """
 configuration functions for pymol containing a collection of settings for a specific purpose
@@ -17,7 +17,11 @@ def pymolrc():
 
     # color space
     cmd.space('pymol')
+
+    # environment and color
     cmd.bg_color('white')
+    cmd.set('depth_cue', 'off')
+    cmd.set('fog', 'off')
 
     # nicer visualization
     cmd.set('valence', 'on')
@@ -58,9 +62,6 @@ def rendering():
     cmd.set('hash_max', 1000)
     cmd.set('line_smooth', 'on')
 
-    cmd.set('depth_cue', 'off')
-    cmd.set('fog', 'off')
-
     # lighting both in- and outside of a surface
     cmd.set('two_sided_lighting', 'on')
 
@@ -94,6 +95,6 @@ def rendering():
 
 
 if __name__ == 'pymol':
-    cmd.extend('mt_config_pymolrc', pymolrc)
-    cmd.extend('mt_config_trajectory', trajectory)
-    cmd.extend('mt_config_rendering', rendering)
+    cmd.extend('stir_config_pymolrc', pymolrc)
+    cmd.extend('stir_config_trajectory', trajectory)
+    cmd.extend('stir_config_rendering', rendering)

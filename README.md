@@ -9,8 +9,8 @@ Its main focus are [Martini coarse-grained systems](cgmartini.nl).
 
 # Installation
 
-You will first need to install [garnish](https://github.com/mjtadema/garnish), since handling of git dependencies
-is apparently a mess.
+Grab the latest PyMOL from [here](https://github.com/schrodinger/pymol-open-source). You will also
+have to install [garnish](https://github.com/mjtadema/garnish).
 
 Once you've done that, you can just use pip:
 ```bash

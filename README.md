@@ -13,7 +13,7 @@ You will first need to install [garnish](https://github.com/mjtadema/garnish), s
 is apparently a mess.
 
 Once you've done that, you can just use pip:
-```
+```bash
 pip install git+git://github.com/brisvag/stir.git#egg=stir
 ```
 pip will automatically add the `stir` command to your `PATH`.
@@ -21,12 +21,12 @@ pip will automatically add the `stir` command to your `PATH`.
 # Usage
 
 Use `stir` to open pymol and automatically run all the default tools. Check out the help with:
-```
+```bash
 stir -h
 ```
 
 For example, to load a typical system:
-```
+```bash
 stir system.gro topol.top md.xtc
 ```
 `stir` initializes PyMOL with its own `pymolrc` and automatically runs `garnish` and `nice`.

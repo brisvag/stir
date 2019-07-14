@@ -1,4 +1,4 @@
-# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+# Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
 from pymol import cmd, stored
 import random
@@ -7,7 +7,7 @@ import re
 
 def nice_settings():
     """
-    sets up a series of settings and stores in pymol.stored to be used at later points by mtools
+    sets up a series of settings and stores in pymol.stored to be used at later points by stir
 
     parts:
     - a set of nicely distinguishable colors for mt_color

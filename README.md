@@ -1,34 +1,34 @@
-# Martini Pymol Tools
+# Simple Trajectory Inspection and Representation
 
-This repository is a collection of tools that will make your life easier
-when using pymol to visualize Martini coarse-grained trajectories.
+**STIR** is a wrapper for [PyMOL](https://github.com/schrodinger/pymol-open-source) that provides a
+collection of tools for the visualization of trajectories.
+
+Its main focus are [Martini coarse-grained systems](https://cgmartini.nl) 
 
 # Installation
 
-You will first need to install [garnish](https://github.com/mjtadema/garnish).
+You will first need to install [garnish](https://github.com/mjtadema/garnish), since handling of git dependencies
+is apparently a mess.
 
 Once you've done that, you can just use pip:
 ```
-pip install git+git://github.com/martinitoolspymol/mtools.git#egg=martinitoolspymol
+pip install git+git://github.com/brisvag/stir.git#egg=stir
 ```
-pip will automatically add mt_pymol to your `PATH`.
+pip will automatically add the `stir` command to your `PATH`.
 
 # Usage
 
-Use `mt_pymol` to open pymol and automatically run all the default tools. Check out the help with:
+Use `stir` to open pymol and automatically run all the default tools. Check out the help with:
 ```
-mt_pymol -h
+stir -h
 ```
-
-Alternatively, you can run the individual tools from pymol (or add them to you `~/.pymolrc.pml`)
-and then use their functions from within pymol as normal.
 
 # Tools
 
-## mt_pymol
-Wrapper for pymol and most of the other tools.
+## stir
+Wrapper for pymol. Loads a system and provides access to the other tools.
 ```
-mt_pymol system.gro topol.top md.xtc
+stir system.gro topol.top md.xtc
 ```
 Initializes with the repo's `pymolrc` and automatically runs `garnish` and `mt_nice`. 
 Also loads the other tools, ready to be used with `mt_toolname` from within pymol. 

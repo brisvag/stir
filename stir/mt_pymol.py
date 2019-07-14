@@ -1,4 +1,4 @@
-# Copyright 2019-2019 the mtools authors. See copying.md for legal info.
+# Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
 """
 Python wrapper for pymol to easily visualize martini trajectories
@@ -50,14 +50,14 @@ def main():
                            help='corresponding trajectory file. If multiple files are given, '
                                 'they are concatenated')
 
-    opt_group = parser.add_argument_group('optional mtools arguments')
+    opt_group = parser.add_argument_group('optional stir arguments')
     opt_group.add_argument('--keep-water', dest='keepwater', action='store_true',
                            help='do not delete waters from the system. Decreases performance')
     opt_group.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
                            help='path to the gromacs executable')
     opt_group.add_argument('-r', '--run-tool', dest='runtool', type=str, default=[], nargs='*',
                            action='append',
-                           help='a mtools command to be run after loading. (e.g.: '
+                           help='a stir command to be run after loading. (e.g.: '
                                 'mt_supercell 3,3,1). Can be specified multiple times')
 
     traj_group = parser.add_argument_group('optional trajectory arguments')
@@ -100,7 +100,7 @@ def main():
     __main__.pymol_argv = ['pymol'] + pymol_args
     pymol.finish_launching()
 
-    # run pymolrc and load all the mtools
+    # run pymolrc and load all the stir
     config.pymolrc()
     mt_nice.load()
     mt_supercell.load()

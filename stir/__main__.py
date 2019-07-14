@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-from .mt_pymol import main
+from .stir import main
 
 main()

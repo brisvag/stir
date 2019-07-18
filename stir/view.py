@@ -1,5 +1,9 @@
 # Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
+"""
+Tools and functions for better visualization and selection
+"""
+
 from pymol import cmd, stored
 import random
 import re
@@ -281,6 +285,9 @@ ARGUMENTS
 
 
 def load():
+    """
+    adds nice, nicesele and nicecolor commands to pymol
+    """
     nice_settings()
     cmd.extend('nicesele', nicesele)
     cmd.extend('nicecolor', nicecolor)

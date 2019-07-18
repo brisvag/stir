@@ -173,6 +173,9 @@ SEE ALSO
 
 
 def load():
+    """
+    adds symexpcell and supercell commands to pymol
+    """
     cmd.extend('symexpcell', symexpcell)
     cmd.extend('supercell', supercell)
 

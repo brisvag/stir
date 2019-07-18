@@ -39,7 +39,9 @@ def clean_path(path_in):
 
 
 def enough_ram(traj_list, skip):
-    # check if there's enough memory to load the requested traj and warn the user if needed:
+    """
+    check if there's enough memory to load the requested trjectories
+    """
     freemem = psutil.virtual_memory().available
     traj_size = 0
     for traj in traj_list:

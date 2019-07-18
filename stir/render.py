@@ -1,5 +1,9 @@
 # Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
+"""
+commodity functions to make taking pictures and making movies easier and faster
+"""
+
 from pymol import cmd, movie
 
 # local imports
@@ -99,6 +103,9 @@ ARGUMENTS
 
 
 def load():
+    """
+    adds cheese command to pymol
+    """
     cmd.extend('cheese', cheese)
 
 

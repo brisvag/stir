@@ -27,6 +27,10 @@ class MyParser(argparse.ArgumentParser):
 
 
 def main():
+    """
+    parses arguments user input and initializes stir based on user input
+    provides help for usage
+    """
     parser = MyParser(prog='stir', description='A python wrapper for pymol and several tools and scripts.',
                       formatter_class=argparse.RawDescriptionHelpFormatter,
                       epilog='Examples:\n'
@@ -100,7 +104,7 @@ def main():
     __main__.pymol_argv = ['pymol'] + pymol_args
     pymol.finish_launching()
 
-    # run pymolrc and load all the stir
+    # run pymolrc and load all the stir tools
     config.pymolrc()
     view.load()
     supercell.load()

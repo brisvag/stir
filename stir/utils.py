@@ -49,3 +49,22 @@ def enough_ram(traj_list, skip):
     if freemem < 5*(traj_size/skip):
         return False
     return True
+
+
+def stir_help():
+    """
+    print a summary of all stir functions and other useful pymol commands
+    """
+    help_message = '''
+    STIR functions:
+
+    - garnish: draw bonds between atoms based on topology
+    - nice: apply a nice visualization preset
+    - supercell: show neighboring periodic/symmetric cells
+    - cheese: take a picture or a video of the system
+
+    Other useful PyMOL commands:
+    - intra_fit: align a trajectory to a specific selection and frame
+    '''
+
+    print(help_message)

@@ -15,7 +15,7 @@ from garnish import garnish
 # local imports
 from . import config
 from . import render, view, supercell
-from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram
+from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram, stir_help
 
 
 class MyParser(argparse.ArgumentParser):
@@ -157,13 +157,5 @@ def main():
         cmd.sync()
 
     # print some help after everything is loaded
-    stir_help = '''
-    STIR functions:
-
-    - garnish
-    - nice, nicesele, nicecolor
-    - supercell
-    - cheese
-    '''
+    stir_help()
     cmd.sync()
-    print(stir_help)

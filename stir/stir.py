@@ -45,7 +45,7 @@ def main():
 
     req_group = parser.add_argument_group('required arguments')
     req_group.add_argument(dest='struct', type=valid_str,
-                           help='gro or similar file containing a martini structure')
+                           help='gro or pdb file containing a martini structure')
 
     pos_group = parser.add_argument_group('positional arguments')
     pos_group.add_argument(dest='topol', type=valid_top, default=None, nargs='?',

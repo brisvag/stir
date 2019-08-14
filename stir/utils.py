@@ -12,8 +12,8 @@ import psutil
 # functions used by the argument parser to check if input files are valid
 def valid_str(param):
     _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.gro',) or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid gromacs structure file.')
+    if ext.lower() not in ('.gro', '.pdb',) or not os.path.isfile(param):
+        raise argparse.ArgumentTypeError(f'File {param} must be a valid structure file.')
     return param
 
 

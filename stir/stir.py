@@ -125,20 +125,21 @@ def main():
     # get the loaded object's name, so we can load the traj into it as new states
     sys_obj = cmd.get_object_list()[0]
 
-    # load trajectories
+    # load trajectories, leaving out waters if not asked for
+    selection = 'all'
+    if not args.keepwater:
+        selection = 'not resname W+WN'
     if args.traj:
         config.trajectory()
         for traj in args.traj:
             cmd.sync()
-            cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip)
+            cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip,
+                          selection=selection)
         cmd.sync()
 
-    # TODO: "selection" in load_traj seems not to work as planned. Can we get it to work?
-    #       Other option: call trjconv to get rid of the waters before loading
-    # delete waters, unless they are needed
+    # also, delete waters from first frame
     if not args.keepwater:
-        cmd.remove('resname W or resname WN')
-        cmd.sync()
+        cmd.remove('resname W+WN')
 
     # run garnish with as many arguments as we got
     garnish_args = []

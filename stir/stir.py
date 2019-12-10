@@ -64,6 +64,11 @@ def main():
                            help='a command to be run after loading. (e.g.: supercell 3,3,1).'
                                 'Can be specified multiple times')
 
+    gar_group = parser.add_argument_group('optional garnish arguments')
+    gar_group.add_argument('--no-fix', dest='nofix', action='store_true',
+                           help='disable the atom-id-based fix for the elastic network in garnish. '
+                                'Use if your system has messy, non-sequential numbering.')
+
     traj_group = parser.add_argument_group('optional trajectory arguments')
     traj_group.add_argument('-s', '--skip', dest='skip', type=int, default=1,
                             help='load frames skipping this interval. Useful to reduce memory load')
@@ -141,6 +146,8 @@ def main():
         garnish_args.append(clean_path(args.topol))
     if args.gmx:
         garnish_args.append(f'gmx={args.gmx}')
+    if args.nofix:
+        garnish_args.append(f'fix_elastics=0')
     garnish_args = ', '.join(garnish_args)
 
     cmd.do(f'garnish {garnish_args}')

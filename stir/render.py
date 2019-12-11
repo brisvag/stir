@@ -24,6 +24,7 @@ USAGE
 ARGUMENTS
 
     render_type = one of:
+        - set: only load render settings
         - snap: take a snapshot of the current view
         - traj: record the whole trajectory
         - bullettime: make a whole revolution around the z axis
@@ -53,8 +54,11 @@ ARGUMENTS
         cmd.mset(f'1x{frames}')
         return frames
 
-    # if requested, take a picture
-    if render_type == 'snap':
+    # only load settings
+    if render_type == 'set':
+        return
+    # take a simple picture
+    elif render_type == 'snap':
         cmd.ray(width=width, height=height)
     # make a still movie of the whole trajectory
     elif render_type == 'traj':
@@ -93,10 +97,17 @@ ARGUMENTS
 
     # save if required, otherwise just play it
     if savefile:
-        cmd.viewport(width, height)
-        movie.produce(f'{savefile}.mp4', mode=mode, encoder='ffmpeg', quality=100)
+        if render_type in ('traj', 'bullettime',):
+            cmd.viewport(width, height)
+            movie.produce(f'{savefile}.mp4', mode=mode, encoder='ffmpeg', quality=100)
+        elif render_type in ('snap',):
+            cmd.png(f'{savefile}.png', dpi=300)
+        cmd.sync()
     else:
-        cmd.mplay()
+        if render_type in ('traj', 'bullettime',):
+            cmd.mplay()
+        elif render_type in ('snap',):
+            pass
 
     # restore previous settings
 #    cmd.do(f'run {settings_file}')

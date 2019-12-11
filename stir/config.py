@@ -61,6 +61,7 @@ def rendering():
     util.performance(0)
     cmd.set('hash_max', 1000)
     cmd.set('line_smooth', 'on')
+    cmd.set('antialias', 2)
 
     # lighting both in- and outside of a surface
     cmd.set('two_sided_lighting', 'on')

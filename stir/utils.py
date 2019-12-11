@@ -55,9 +55,6 @@ def enough_ram(traj_list, skip):
 
 def stir_help():
     """
-    print a summary of all stir functions and other useful pymol commands
-    """
-    help_message = '''
     STIR functions:
 
     - garnish: draw bonds between atoms based on topology
@@ -65,8 +62,9 @@ def stir_help():
     - supercell: show neighboring periodic/symmetric cells
     - cheese: take a picture or a video of the system
 
+    Simply run `help stir` or just `stir` to print this help again.
+
     Other useful PyMOL commands:
     - intra_fit: align a trajectory to a specific selection and frame
-    '''
-
-    print(help_message)
+    """
+    print(stir_help.__doc__)

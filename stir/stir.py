@@ -168,6 +168,9 @@ def main():
         cmd.run(scr)
         cmd.sync()
 
+    # add command for simple help function
+    cmd.extend('stir', stir_help)
+
     # print some help after everything is loaded
     stir_help()
     cmd.sync()

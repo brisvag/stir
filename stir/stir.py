@@ -13,7 +13,7 @@ from garnish import garnish
 
 # local imports
 from . import config
-from . import render, view, supercell
+from . import render, view, supercell, edit
 from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram, stir_help
 
 
@@ -114,6 +114,7 @@ def main():
     view.load()
     supercell.load()
     render.load()
+    edit.load()
 
     # load garnish
     garnish.extend_garnish()

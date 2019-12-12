@@ -4,7 +4,6 @@
 Python wrapper for pymol to easily visualize martini trajectories
 """
 
-import os
 import sys
 import argparse
 import pymol
@@ -100,10 +99,11 @@ def main():
     pymol_args = []
     scripts = []
     for arg in args.pymol:
-        if os.path.splitext(arg)[1] in ('.pml', '.py'):
-            scripts.append(clean_path(arg))
+        p = clean_path(args)
+        if p.suffix in ('.pml', '.py'):
+            scripts.append(str(p))
         else:
-            pymol_args.append(arg)
+            pymol_args.append(str(p))
 
     # initialize pymol
     __main__.pymol_argv = ['pymol'] + pymol_args
@@ -120,21 +120,20 @@ def main():
     cmd.sync()
 
     # open the structure
-    cmd.load(clean_path(args.struct))
+    cmd.load(str(clean_path(args.struct)))
     cmd.sync()
     # get the loaded object's name, so we can load the traj into it as new states
     sys_obj = cmd.get_object_list()[0]
 
     # load trajectories, leaving out waters if not asked for
-    selection = 'all'
-    if not args.keepwater:
-        selection = 'not resname W+WN'
     if args.traj:
+        selection = 'all'
+        if not args.keepwater:
+            selection = 'not resname W+WN'
         config.trajectory()
         for traj in args.traj:
             cmd.sync()
-            cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip,
-                          selection=selection)
+            cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip, selection=selection)
         cmd.sync()
 
     # also, delete waters from first frame
@@ -144,9 +143,9 @@ def main():
     # run garnish with as many arguments as we got
     garnish_args = []
     if args.topol:
-        garnish_args.append(clean_path(args.topol))
+        garnish_args.append(str(clean_path(args.topol)))
     if args.gmx:
-        garnish_args.append(f'gmx={args.gmx}')
+        garnish_args.append(f'gmx={str(clean_path(args.gmx))}')
     if args.nofix:
         garnish_args.append(f'fix_elastics=0')
     garnish_args = ', '.join(garnish_args)

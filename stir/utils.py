@@ -4,38 +4,38 @@
 Collection of utilities
 """
 
-import os
+from pathlib import Path
 import argparse
 import psutil
 
 
 # functions used by the argument parser to check if input files are valid
 def valid_str(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.gro', '.pdb',) or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid structure file.')
-    return param
+    p = clean_path(param)
+    if p.suffix not in ('.gro', '.pdb',) or not p.is_file():
+        raise argparse.ArgumentTypeError(f'File {p} is not a valid structure file.')
+    return p
 
 
 def valid_traj(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.xtc',) or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid gromacs trajectory file.')
-    return param
+    p = clean_path(param)
+    if p.suffix not in ('.xtc',) or not p.is_file():
+        raise argparse.ArgumentTypeError(f'{p} is not a valid gromacs trajectory file.')
+    return p
 
 
 def valid_top(param):
-    _, ext = os.path.splitext(param)
-    if ext.lower() not in ('.top', '.itp', '.tpr') or not os.path.isfile(param):
-        raise argparse.ArgumentTypeError(f'File {param} must be a valid tpr or topology file.')
-    return param
+    p = clean_path(param)
+    if p.suffix not in ('.top', '.itp', '.tpr') or not p.is_file():
+        raise argparse.ArgumentTypeError(f'{p} is not a valid tpr or topology file.')
+    return p
 
 
-def clean_path(path_in):
+def clean_path(path):
     """
     cleans up paths and resolves ~ and symlinks
     """
-    return os.path.realpath(os.path.expanduser(os.path.expandvars(path_in)))
+    return Path(path).expanduser().resolve()
 
 
 def enough_ram(traj_list, skip):
@@ -45,7 +45,7 @@ def enough_ram(traj_list, skip):
     freemem = psutil.virtual_memory().available
     traj_size = 0
     for traj in traj_list:
-        traj_size += os.path.getsize(clean_path(traj))
+        traj_size += clean_path(traj).stat().st_size
     # TODO: add keepwater info when we can actually use it to load selectively
     # check if there's enough free memory: the number 5 is based on some testing
     if freemem < 5*(traj_size/skip):

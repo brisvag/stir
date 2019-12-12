@@ -23,6 +23,8 @@ USAGE
 ARGUMENTS
 
     rule = one of groups|molecules (default='groups')
+           groups: splits protein, lipids, solvent, nucleic
+           molecules: every molecule in a different object (also chains)
     selection (default='all')
     """
     # sanitize input
@@ -41,7 +43,13 @@ ARGUMENTS
                 cmd.sync()
 
     elif rule == 'molecules':
-        raise NotImplementedError
+        for obj in cmd.get_object_list(selection):
+            stored.tmp_set = set()
+            cmd.iterate(f'{selection} and {obj}', f'stored.tmp_set.add(int(segi))')
+            cmd.sync()
+            zeros = len(str(max(stored.tmp_set)))
+            for mol_id in stored.tmp_set:
+                cmd.create(f'{obj}_n{mol_id:0{zeros}}', f'segi {mol_id}')
 
 
 def load():

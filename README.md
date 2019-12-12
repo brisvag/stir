@@ -85,3 +85,9 @@ to take a quick ray-traced picture. For a movie, try:
 ```
 cheese bullettime, test_movie, width=640, height=480
 ```
+
+## split
+Split the system into multiple objects according to a specific rule. For example, to split protein/lipids/nucleic/solvent:
+```
+split groups
+```

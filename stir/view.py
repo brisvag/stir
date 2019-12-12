@@ -7,6 +7,7 @@ Tools and functions for better visualization and selection
 from pymol import cmd, stored
 import random
 import re
+import string
 
 
 def nice_settings():
@@ -218,7 +219,7 @@ ARGUMENTS
     cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.nicecolors)')
     cmd.alter(selection, f'color = stored.tmp_dict[{method}]')
     cmd.sync()
-    stored.tmp_dict = {}
+    del stored.tmp_dict
     cmd.recolor()
     cmd.sync()
 
@@ -243,6 +244,29 @@ def set_vdw(selection='all'):
 
     cmd.alter(selection, 'vdw=stored.alter_vdw(elem, vdw)')
     cmd.sync()
+
+
+def set_chains(selection='all'):
+    """
+    alters chain identifiers based on segi and type
+    """
+    selection = f'{selection} and prot'
+    stored.tmp_set = set()
+    cmd.iterate(f'{selection}', f'stored.tmp_set.add(segi)')
+    cmd.sync()
+    # create dictionary to match each segi to a chain
+    let = string.ascii_uppercase
+    if len(let) > len(stored.tmp_set):
+        chains = dict(zip(stored.tmp_set, let))
+    else:
+        chains = dict.fromkeys(stored.tmp_set, 'A')
+
+    stored.chains = chains
+
+    cmd.alter(selection, f'chain=stored.chains[segi]')
+    cmd.sync()
+
+    # del stored.tmp_set, stored.chains
 
 
 def nice(style='clean', selection='all'):
@@ -271,9 +295,6 @@ ARGUMENTS
     nicesele()
 
     cmd.set('stick_radius', 0.7)
-    cmd.sync()
-    # set correct vdw radii
-    set_vdw(selection)
     cmd.sync()
 
     settings = stored.nice_set[style]

@@ -154,7 +154,15 @@ def main():
     cmd.do(f'garnish {garnish_args}')
     cmd.sync()
 
-    # run nice with the `clean` setting
+    # load garnish data into pymol
+    view.nicesele()
+    cmd.sync()
+    view.set_vdw()
+    cmd.sync()
+    view.set_chains()
+    cmd.sync()
+
+    # run nice with the default settings
     cmd.do(f'nice')
     cmd.sync()
 

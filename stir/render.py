@@ -119,6 +119,9 @@ def load():
     """
     cmd.extend('cheese', cheese)
 
+    # tab completion
+    cmd.auto_arg[0]['cheese'] = [lambda: cmd.Shortcut(['set', 'snap', 'traj', 'bullettime']), 'render type', '']
+
 
 if __name__ == 'pymol':
     load()

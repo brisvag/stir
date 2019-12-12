@@ -49,3 +49,7 @@ def load():
     adds split command to pymol
     """
     cmd.extend('split', split)
+
+    # tab completion
+    cmd.auto_arg[0]['split'] = [lambda: cmd.Shortcut(['groups', 'molecules']), 'rule', '']
+    cmd.auto_arg[1]['split'] = [cmd.selection_sc, 'selection', '']

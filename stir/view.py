@@ -254,7 +254,7 @@ DESCRIPTION
 
 USAGE
 
-    nice [, style [, selection]]
+    nice [style [, selection]]
 
 ARGUMENTS
 
@@ -295,3 +295,7 @@ def load():
     cmd.extend('nicesele', nicesele)
     cmd.extend('nicecolor', nicecolor)
     cmd.extend('nice', nice)
+
+    # tab completion
+    cmd.auto_arg[0]['nice'] = [lambda: cmd.Shortcut(['clean', 'rainbow', 'balls']), 'style', '']
+    cmd.auto_arg[1]['nice'] = [cmd.selection_sc, 'selection', '']

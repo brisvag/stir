@@ -39,7 +39,7 @@ It also loads the other tools, ready to be used from within PyMOL.
 ## garnish
 Draws bonds and elastic network for coarse-grained systems.
 ```
-garnish selection [, tpr_file|top_file]
+garnish [selection [, tpr_file|top_file]]
 ```
 Source: https://github.com/mjtadema/garnish
 

@@ -154,7 +154,7 @@ def main():
     cmd.sync()
 
     # run nice with the `clean` setting
-    cmd.do(f'nice selection="not *_elastics"')
+    cmd.do(f'nice')
     cmd.sync()
 
     # finally run user-requested tools

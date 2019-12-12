@@ -66,8 +66,8 @@ def nice_settings():
     stored.niceselectors = {
         'prot': 'polymer.protein',
         'BB': 'polymer.protein and name BB',
-        'SC': 'polymer.protein and name SC*',
-        'solv': 'resn W or resn WN or resn ION',
+        'SC': 'polymer.protein and not name BB',
+        'solv': 'resn W+WN+ION',
         'ions': 'resn ION',
         'lip': 'organic and not ions',
         'nucl': 'polymer.nucleic'
@@ -78,91 +78,91 @@ def nice_settings():
     stored.nice_set = {
         'clean': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [nicecolor, 'chain'],
+                'color': [nicecolor, 'chain'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'SC': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'solv': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'ions': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
             },
         },
         'rainbow': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [nicecolor, 'chain'],
+                'color': [nicecolor, 'chain'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'SC': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'solv': {
-                'color_method': [cmd.color, 'blue'],
+                'color': [cmd.color, 'blue'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'ions': {
-                'color_method': [nicecolor, 'name'],
+                'color': [nicecolor, 'name'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
         },
         'balls': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [cmd.color, 'purple'],
+                'color': [cmd.color, 'purple'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'SC': {
-                'color_method': [cmd.color, 'red'],
+                'color': [cmd.color, 'red'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'solv': {
-                'color_method': [cmd.color, 'blue'],
+                'color': [cmd.color, 'blue'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'ions': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'spheres'],
             },
         },
@@ -177,7 +177,7 @@ DESCRIPTION
 
 USAGE
 
-    nicesele [delete]
+    nicesele [, delete]
 
 ARGUMENTS
 
@@ -250,6 +250,7 @@ def nice(style='clean', selection='all'):
 DESCRIPTION
 
     apply a nice preset for the visualization of a martini molecular system
+    NOTE: ignores object names matching `*_elastics`
 
 USAGE
 
@@ -261,9 +262,11 @@ ARGUMENTS
     selection (default='all')
     """
     # sanitize input
-    if style not in ['clean', 'rainbow', 'balls']:
-        print(f'Error: {style} is not a valid option. See help nice')
+    if style not in stored.nice_set.keys():
+        print(f'Error: {style} is not a valid option. Choose from: {list(stored.nice_set.keys())}')
         return
+
+    selection = f'{selection} and not *_elastics'
 
     nicesele()
 

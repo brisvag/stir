@@ -55,7 +55,7 @@ nice [style [, selection]]
 #### nicesele
 To automatically create (or delete) commonly used selections, such as `lip` for lipids and `BB` for backbone beads:
 ```
-nicesele [delete]
+nicesele [, delete]
 ```
 
 #### nicecolor 

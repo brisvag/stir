@@ -290,22 +290,21 @@ ARGUMENTS
         print(f'Error: {style} is not a valid option. Choose from: {list(stored.nice_set.keys())}')
         return
 
-    selection = f'{selection} and not *_elastics'
-
     nicesele()
-
     cmd.set('stick_radius', 0.7)
     cmd.sync()
 
-    settings = stored.nice_set[style]
-    for sel_type, commands in settings.items():
+    for sel_type, commands in stored.nice_set[style].items():
         for command in commands.values():
-            if command:
+            if command is not None:
                 # run function with its arguments. All functions must have `selection` as
                 # valid argument for this to work!
                 command[0](*command[1:], selection=f'{selection} and {sel_type}')
-            else:
-                continue
+
+    # show elastics as lines once again
+    cmd.show_as('lines', f'{selection} and *_elastics')
+    cmd.color('orange', f'{selection} and *_elastics')
+    cmd.set('line_width', 1)
 
 
 def load():

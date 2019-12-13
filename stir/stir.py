@@ -12,16 +12,40 @@ import __main__
 from garnish import garnish
 
 # local imports
+from . import __version__
 from . import config
 from . import render, view, supercell, edit
-from .utils import valid_str, valid_top, valid_traj, clean_path, enough_ram, stir_help
+from .utils import clean_path, stir_help
 
 
-class MyParser(argparse.ArgumentParser):
-    # print help if calling the program results in an error
+class FilesAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_strings):
+        types = {
+            'struct': ('.gro', '.pdb',),
+            'topol': ('.top', '.itp', '.tpr',),
+            'traj': ('.xtc',),
+            'scene': ('.pse',),
+        }
+        sorted = {k: [] for k in types}
+        for v in values:
+            p = clean_path(v)
+            if not p.is_file():
+                parser.error(f'{p} does not exist.')
+            for file, ext in types.items():
+                if p.suffix in ext:
+                    sorted[file].append(p)
+                    break
+            else:
+                parser.error(f'{p.suffix} is not a valid file type.')
+
+        setattr(namespace, self.dest, sorted)
+
+
+class HelpfulParser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write(f'ERROR: {message}\n\n')
-        self.print_help()
+        # print usage and red error message
+        sys.stderr.write(f'\033[91mERROR: {message}\033[0m\n\n')
+        self.print_usage()
         sys.exit(2)
 
 
@@ -30,77 +54,95 @@ def main():
     parses arguments user input and initializes stir based on user input
     provides help for usage
     """
-    parser = MyParser(prog='stir', description='A python wrapper for pymol and several tools and scripts.',
-                      formatter_class=argparse.RawDescriptionHelpFormatter,
-                      epilog='Examples:\n'
-                             '\tstir system.gro topol.top md.xtc\n'
-                             '\tstir system.gro --keep-water -r supercell 3,3,1\n'
-                             '\tstir system.gro topol.tpr --pymol -qi myscript.pml',
-                      add_help=False)
+    parser = HelpfulParser(
+        prog='stir', formatter_class=argparse.RawDescriptionHelpFormatter, add_help=False,
+        description='A python wrapper for pymol and several helpful tools and scripts\n'
+                    'mainly focused on martini coarse-grained trajectories.\n\n'
+                    'The accepted file formats are:\n'
+                    '- structure: gro, pdb\n'
+                    '- scene: pse\n'
+                    '- topology: top, itp, tpr\n'
+                    '- trajectory: xtc',
+        epilog='Examples:\n'
+               '\tstir system.gro topol.top md.xtc\n'
+               '\tstir system.gro --keep-water -r supercell 3,3,1\n'
+               '\tstir system.gro topol.tpr --pymol -qi myscript.pml',
+        )
 
-    help_group = parser.add_argument_group('HELP')
-    help_group.add_argument('-h', '--help', action='help',
-                            help='show this help message and exit')
-
-    req_group = parser.add_argument_group('required arguments')
-    req_group.add_argument(dest='struct', type=valid_str,
-                           help='gro or pdb file containing a martini structure')
-
-    pos_group = parser.add_argument_group('positional arguments')
-    pos_group.add_argument(dest='topol', type=valid_top, default=None, nargs='?',
-                           help='top or tpr file with the topology of the system')
-    pos_group.add_argument(dest='traj', type=valid_traj, default=None, nargs='*',
-                           help='corresponding trajectory file. If multiple files are given, '
-                                'they are concatenated')
+    files_group = parser.add_argument_group('file arguments')
+    files_group.add_argument(dest='files', action=FilesAction, nargs='+',
+                             help='a structure or scene file is required. Topology files allow for topology '
+                                  'reconstruction. Trajectory files are also accepted. Order does not matter')
 
     opt_group = parser.add_argument_group('optional stir arguments')
     opt_group.add_argument('--keep-water', dest='keepwater', action='store_true',
                            help='do not delete waters from the system. Decreases performance')
     opt_group.add_argument('-g', '--gmx', dest='gmx', type=str, default=None,
                            help='path to the gromacs executable')
-    opt_group.add_argument('-r', '--run-tool', dest='runtool', type=str, default=[], nargs='*',
+    opt_group.add_argument('-r', '--run-tool', dest='runtool', metavar='token', type=str, default=[], nargs='*',
                            action='append',
-                           help='a command to be run after loading. (e.g.: supercell 3,3,1).'
+                           help='a command to be run after loading. (e.g.: supercell 3,3,1). '
                                 'Can be specified multiple times')
 
     gar_group = parser.add_argument_group('optional garnish arguments')
-    gar_group.add_argument('--no-fix', dest='nofix', action='store_true',
-                           help='disable the atom-id-based fix for the elastic network in garnish. '
-                                'Use if your system has messy, non-sequential numbering.')
+    gar_group.add_argument('--no-fix', dest='nofix', action='store_false',  # store false!
+                           help='disable the atom-id-based fix for the elastic network in garnish '
+                                '(use if your system has messy, non-sequential numbering.')
+    gar_group.add_argument('--no-prot', dest='noprot', action='store_false',    # store false!
+                           help='do not guess protein backbone beads (use if normal guessing makes mistakes')
+    gar_group.add_argument('--no-garnish', dest='nogarnish', action='store_true',
+                           help='do not run garnish on the system (use with atomistic systems)')
 
     traj_group = parser.add_argument_group('optional trajectory arguments')
-    traj_group.add_argument('-s', '--skip', dest='skip', type=int, default=1,
-                            help='load frames skipping this interval. Useful to reduce memory load')
+    traj_group.add_argument('-s', '--skip', dest='skip', metavar='n', type=int, default=1,
+                            help='load trajectory frames skipping this interval. Useful to reduce memory load')
+    traj_group.add_argument('-b', '--begin', dest='begin', metavar='frame', type=int, default=1,
+                            help='first frame to load from trajectory. Only acts on first trajectory file')
+    traj_group.add_argument('-e', '--end', dest='end', metavar='frame', type=int, default=-1,
+                            help='last frame to load from trajectory. Only acts on last trajectory file')
+    traj_group.add_argument('-m', '--max', dest='max', metavar='n', type=int, default=0,
+                            help='maximum number of frames to load')
 
-    more_group = parser.add_argument_group('advanced arguments')
+    more_group = parser.add_argument_group('pymol arguments')
     more_group.add_argument('-p', '--pymol', dest='pymol', default=[], nargs=argparse.REMAINDER,
                             help='all following arguments will be passed directly to pymol. '
                                  'Accepts options and .pml scripts')
-    # TODO: add more options:
-    #       - load_traj start/end...
+
+    help_group = parser.add_argument_group('info')
+    help_group.add_argument('-h', '--help', action='help',
+                            help='show this help message and exit')
+    help_group.add_argument('-V', '--version', action='version', version=f'%(prog)s {__version__}')
 
     args = parser.parse_args()
 
-    if args.traj:
-        if not enough_ram(args.traj, args.skip):
-            ok = False
-            while not ok:
-                inp = input('WARNING: You may not have enough free memory to open '
-                            'this big trajectory.\nConsider using the trajectory options to reduce '
-                            'the memory load.\nOtherwise, proceed at your own risk ;) [y/N] ')
-                if inp.lower() in ['yes', 'y']:
-                    ok = True
-                elif inp.lower() in ['no', 'n', '']:
-                    parser.print_help()
-                    exit(0)
-                else:
-                    print(f'ERROR: "{inp}" is not a valid choice')
+    struct = args.files['struct']
+    scene = args.files['scene']
+    topol = args.files['topol']
+    traj = args.files['traj']
+
+    # make sure we only have 1 structure OR scene file and at most one topol
+    if not bool(struct) ^ bool(scene):  # not xor
+        parser.error('you must provide either a structure or scene file')
+    elif len(struct) > 1 or len(scene) > 1 or len(topol) > 1:
+        parser.error('only one system can be opened at once... for now!')  # TODO?
+
+    # sanitize trajectory args
+    if args.skip < 1:
+        args.skip = 1
+    if args.begin < 1:
+        args.begin = 1
+    if args.end < 1 and args.end != -1:
+        args.end = 1
+    if args.max < 0:
+        args.max = 0
 
     pymol_args = []
     scripts = []
     for arg in args.pymol:
-        p = clean_path(args)
+        p = clean_path(arg)
         if p.suffix in ('.pml', '.py'):
+            if not p.is_file():
+                raise FileNotFoundError(f'{p} does not exist')
             scripts.append(str(p))
         else:
             pymol_args.append(str(p))
@@ -121,50 +163,62 @@ def main():
     cmd.sync()
 
     # open the structure
-    cmd.load(str(clean_path(args.struct)))
+    if scene:
+        cmd.load(scene[0])
+    elif struct:
+        cmd.load(struct[0])
     cmd.sync()
     # get the loaded object's name, so we can load the traj into it as new states
     sys_obj = cmd.get_object_list()[0]
 
     # load trajectories, leaving out waters if not asked for
-    if args.traj:
+    if traj:
+        skip = args.skip
+        max_states = args.max
         selection = 'all'
         if not args.keepwater:
             selection = 'not resname W+WN'
         config.trajectory()
-        for traj in args.traj:
+        for i, t in enumerate(traj):
             cmd.sync()
-            cmd.load_traj(clean_path(traj), sys_obj, interval=args.skip, selection=selection)
+            start = 1
+            if i == 0:
+                start = args.begin
+            stop = -1
+            if i == len(traj) - 1:
+                stop = args.end
+            if args.max != 0:
+                max_states = args.max - cmd.count_states()
+                if max_states < 1:
+                    break
+            cmd.load_traj(t, sys_obj, interval=skip, start=start, stop=stop,
+                          max=max_states, selection=selection)
         cmd.sync()
 
     # also, delete waters from first frame
     if not args.keepwater:
         cmd.remove('resname W+WN')
+        cmd.sync()
 
-    # run garnish with as many arguments as we got
-    garnish_args = []
-    if args.topol:
-        garnish_args.append(str(clean_path(args.topol)))
-    if args.gmx:
-        garnish_args.append(f'gmx={str(clean_path(args.gmx))}')
-    if args.nofix:
-        garnish_args.append(f'fix_elastics=0')
-    garnish_args = ', '.join(garnish_args)
+    if not args.nogarnish:
+        # sanitize topol
+        if not topol:
+            topol = [None]
+        garnish.garnish(file=topol[0], gmx=args.gmx, fix_elastics=args.nofix,
+                        guess_prot=args.noprot, show=False)
+        cmd.sync()
 
-    cmd.do(f'garnish {garnish_args}')
-    cmd.sync()
+        # load garnish data into pymol
+        view.nicesele()
+        cmd.sync()
+        view.set_vdw()
+        cmd.sync()
+        view.set_chains()
+        cmd.sync()
 
-    # load garnish data into pymol
-    view.nicesele()
-    cmd.sync()
-    view.set_vdw()
-    cmd.sync()
-    view.set_chains()
-    cmd.sync()
-
-    # run nice with the default settings
-    cmd.do(f'nice')
-    cmd.sync()
+        # run nice with the default settings, or with balls if no topol was given
+        view.nice()
+        cmd.sync()
 
     # finally run user-requested tools
     for tool in args.runtool:

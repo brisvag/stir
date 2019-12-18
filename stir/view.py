@@ -58,13 +58,13 @@ def nice_settings():
         nicecolors[col_name] = rgb
 
     # store color ids in a list to be used by nicecolor
-    stored.nicecolors = []
+    stored.nice_colors = []
     for color in nicecolors:
         idx = cmd.get_color_index(color)
-        stored.nicecolors.append(idx)
+        stored.nice_colors.append(idx)
 
     # selection expressions
-    stored.niceselectors = {
+    stored.nice_selectors = {
         'prot': 'polymer.protein',
         'BB': 'polymer.protein and name BB',
         'SC': 'polymer.protein and not name BB',
@@ -186,12 +186,12 @@ ARGUMENTS
     """
     if delete:
         if delete == 'delete':
-            for sel in stored.niceselectors:
+            for sel in stored.nice_selectors:
                 cmd.delete(sel)
         else:
             print('Unknown option. Type `nicesele delete` to delete all the pre-made selections')
     else:
-        for sel, logic in stored.niceselectors.items():
+        for sel, logic in stored.nice_selectors.items():
             cmd.select(sel, logic)
     cmd.sync()
     # disable last selection to avoid accidental modifications to it
@@ -216,7 +216,7 @@ ARGUMENTS
     """
     stored.tmp_dict = {}
     stored.r_choice = random.choice
-    cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.nicecolors)')
+    cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.nice_colors)')
     cmd.alter(selection, f'color = stored.tmp_dict[{method}]')
     cmd.sync()
     del stored.tmp_dict

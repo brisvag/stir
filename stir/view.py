@@ -1,8 +1,13 @@
 # Copyright 2019-2019 the stir authors. See copying.md for legal info.
 
+"""
+Tools and functions for better visualization and selection
+"""
+
 from pymol import cmd, stored
 import random
 import re
+import string
 
 
 def nice_settings():
@@ -53,17 +58,17 @@ def nice_settings():
         nicecolors[col_name] = rgb
 
     # store color ids in a list to be used by nicecolor
-    stored.nicecolors = []
+    stored.nice_colors = []
     for color in nicecolors:
         idx = cmd.get_color_index(color)
-        stored.nicecolors.append(idx)
+        stored.nice_colors.append(idx)
 
     # selection expressions
-    stored.niceselectors = {
+    stored.nice_selectors = {
         'prot': 'polymer.protein',
         'BB': 'polymer.protein and name BB',
-        'SC': 'polymer.protein and name SC*',
-        'solv': 'resn W or resn WN or resn ION',
+        'SC': 'polymer.protein and not name BB',
+        'solv': 'resn W+WN+ION',
         'ions': 'resn ION',
         'lip': 'organic and not ions',
         'nucl': 'polymer.nucleic'
@@ -74,91 +79,91 @@ def nice_settings():
     stored.nice_set = {
         'clean': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [nicecolor, 'chain'],
+                'color': [nicecolor, 'chain'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'SC': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'solv': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'ions': {
-                'color_method': None,
+                'color': None,
                 'style': [cmd.hide, 'everything'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
             },
         },
         'rainbow': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [nicecolor, 'chain'],
+                'color': [nicecolor, 'chain'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'SC': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'solv': {
-                'color_method': [cmd.color, 'blue'],
+                'color': [cmd.color, 'blue'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'ions': {
-                'color_method': [nicecolor, 'name'],
+                'color': [nicecolor, 'name'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'sticks'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'sticks'],
             },
         },
         'balls': {
             'prot': {
-                'color_method': None,
+                'color': None,
                 'style': None,
             },
             'BB': {
-                'color_method': [cmd.color, 'purple'],
+                'color': [cmd.color, 'purple'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'SC': {
-                'color_method': [cmd.color, 'red'],
+                'color': [cmd.color, 'red'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'solv': {
-                'color_method': [cmd.color, 'blue'],
+                'color': [cmd.color, 'blue'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'ions': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'nb_spheres'],
             },
             'lip': {
-                'color_method': [nicecolor, 'resn'],
+                'color': [nicecolor, 'resn'],
                 'style': [cmd.show_as, 'spheres'],
             },
             'nucl': {
-                'color_method': [nicecolor, 'resi'],
+                'color': [nicecolor, 'resi'],
                 'style': [cmd.show_as, 'spheres'],
             },
         },
@@ -173,7 +178,7 @@ DESCRIPTION
 
 USAGE
 
-    nicesele [delete]
+    nicesele [, delete]
 
 ARGUMENTS
 
@@ -181,12 +186,12 @@ ARGUMENTS
     """
     if delete:
         if delete == 'delete':
-            for sel in stored.niceselectors:
+            for sel in stored.nice_selectors:
                 cmd.delete(sel)
         else:
             print('Unknown option. Type `nicesele delete` to delete all the pre-made selections')
     else:
-        for sel, logic in stored.niceselectors.items():
+        for sel, logic in stored.nice_selectors.items():
             cmd.select(sel, logic)
     cmd.sync()
     # disable last selection to avoid accidental modifications to it
@@ -211,10 +216,10 @@ ARGUMENTS
     """
     stored.tmp_dict = {}
     stored.r_choice = random.choice
-    cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.nicecolors)')
+    cmd.iterate(selection, f'stored.tmp_dict[{method}] = stored.r_choice(stored.nice_colors)')
     cmd.alter(selection, f'color = stored.tmp_dict[{method}]')
     cmd.sync()
-    stored.tmp_dict = {}
+    del stored.tmp_dict
     cmd.recolor()
     cmd.sync()
 
@@ -241,15 +246,39 @@ def set_vdw(selection='all'):
     cmd.sync()
 
 
+def set_chains(selection='all'):
+    """
+    alters chain identifiers based on segi and type
+    """
+    selection = f'{selection} and prot'
+    stored.tmp_set = set()
+    cmd.iterate(f'{selection}', f'stored.tmp_set.add(segi)')
+    cmd.sync()
+    # create dictionary to match each segi to a chain
+    let = string.ascii_uppercase
+    if len(let) > len(stored.tmp_set):
+        chains = dict(zip(stored.tmp_set, let))
+    else:
+        chains = dict.fromkeys(stored.tmp_set, 'A')
+
+    stored.chains = chains
+
+    cmd.alter(selection, f'chain=stored.chains[segi]')
+    cmd.sync()
+
+    # del stored.tmp_set, stored.chains
+
+
 def nice(style='clean', selection='all'):
     """
 DESCRIPTION
 
     apply a nice preset for the visualization of a martini molecular system
+    NOTE: ignores object names matching `*_elastics`
 
 USAGE
 
-    nice [, style [, selection]]
+    nice [style [, selection]]
 
 ARGUMENTS
 
@@ -257,31 +286,36 @@ ARGUMENTS
     selection (default='all')
     """
     # sanitize input
-    if style not in ['clean', 'rainbow', 'balls']:
-        print(f'Error: {style} is not a valid option. See help nice')
+    if style not in stored.nice_set.keys():
+        print(f'Error: {style} is not a valid option. Choose from: {list(stored.nice_set.keys())}')
         return
 
     nicesele()
-
     cmd.set('stick_radius', 0.7)
     cmd.sync()
-    # set correct vdw radii
-    set_vdw(selection)
-    cmd.sync()
 
-    settings = stored.nice_set[style]
-    for sel_type, commands in settings.items():
+    for sel_type, commands in stored.nice_set[style].items():
         for command in commands.values():
-            if command:
+            if command is not None:
                 # run function with its arguments. All functions must have `selection` as
                 # valid argument for this to work!
                 command[0](*command[1:], selection=f'{selection} and {sel_type}')
-            else:
-                continue
+
+    # show elastics as lines once again
+    cmd.show_as('lines', f'{selection} and *_elastics')
+    cmd.color('orange', f'{selection} and *_elastics')
+    cmd.set('line_width', 1)
 
 
 def load():
+    """
+    adds nice, nicesele and nicecolor commands to pymol
+    """
     nice_settings()
     cmd.extend('nicesele', nicesele)
     cmd.extend('nicecolor', nicecolor)
     cmd.extend('nice', nice)
+
+    # tab completion
+    cmd.auto_arg[0]['nice'] = [lambda: cmd.Shortcut(['clean', 'rainbow', 'balls']), 'style', '']
+    cmd.auto_arg[1]['nice'] = [cmd.selection_sc, 'selection', '']

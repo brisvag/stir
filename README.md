@@ -39,7 +39,7 @@ It also loads the other tools, ready to be used from within PyMOL.
 ## garnish
 Draws bonds and elastic network for coarse-grained systems.
 ```
-garnish selection [, tpr_file|top_file]
+garnish [selection [, tpr_file|top_file]]
 ```
 Source: https://github.com/mjtadema/garnish
 
@@ -55,7 +55,7 @@ nice [style [, selection]]
 #### nicesele
 To automatically create (or delete) commonly used selections, such as `lip` for lipids and `BB` for backbone beads:
 ```
-nicesele [delete]
+nicesele [, delete]
 ```
 
 #### nicecolor 
@@ -84,4 +84,10 @@ cheese snap
 to take a quick ray-traced picture. For a movie, try:
 ```
 cheese bullettime, test_movie, width=640, height=480
+```
+
+## split
+Split the system into multiple objects according to a specific rule. For example, to split protein/lipids/nucleic/solvent:
+```
+split groups
 ```

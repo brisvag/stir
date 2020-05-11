@@ -61,6 +61,7 @@ def rendering():
     util.performance(0)
     cmd.set('hash_max', 1000)
     cmd.set('line_smooth', 'on')
+    cmd.set('antialias', 2)
 
     # lighting both in- and outside of a surface
     cmd.set('two_sided_lighting', 'on')
@@ -92,6 +93,16 @@ def rendering():
     cmd.set('sphere_quality', 4)
 
     cmd.set('movie_panel', 'on')
+
+    # multiplayer transparency
+    cmd.set('transparency_mode', 1)
+
+    # labels
+    cmd.set('label_size', 30)
+    cmd.set('label_color', 'black')
+    cmd.set('label_outline_color', 'white')
+    cmd.set('label_font_id', 7)
+    cmd.set('label_shadow_mode', 1)
 
 
 if __name__ == 'pymol':

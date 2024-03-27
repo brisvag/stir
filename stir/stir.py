@@ -9,7 +9,7 @@ import argparse
 import pymol
 from pymol import cmd
 import __main__
-from garnish import garnish
+import garnish
 
 # local imports
 from . import __version__
